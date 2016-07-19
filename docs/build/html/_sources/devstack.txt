@@ -48,7 +48,8 @@ file Vagrant จากตัวอย่างด้านบน
   ## run stack.sh
   ./stack.sh
 
-ผลลัพท์ที่ได้::
+script ``stack.sh`` จะทำการ download source code จาก github และมาติดตั้งให้เองอัตโนมัติ
+โดยdownload มาเก็บไปใน ``/opt/stack`` และผลลัพท์ที่ได้ จะสามารถใช้งาน openstack ได้ทันที::
 
   =========================
   DevStack Component Timing
@@ -113,8 +114,28 @@ Manage Devstack
 
   *. เลื่อน cursor ไปยัง process ที่ต้องการ แล้วจึงกด ``enter``เพื่อเลือกไปดู process เช่น เลือนไปยัง
   process  2 ซึ่งเป็น process ของ keystone  ``enter``  เพื่อทำการ monitor ใหัสังเกตุดูบรรทัดล่างสุด
-  จะมี เครื่องหมาย ``*``
-
-  .. image:: _images/devstack05.png
-  
+  จะมี เครื่องหมาย ``*`` รูปด้านล่าง
   *. สามารถกด ``Ctrl a N`` โดยที่ N หมายถึงหมายเลข ของ process จะทำให้เข้าไปยัง process นั้นทันที
+
+.. image:: _images/devstack05.png
+
+ออกจาก stack::
+
+  screen -d
+
+
+Add Devstack plugin
+*******************
+สามารถทำได้ด้วยการ เพิ่มเติมค่าใน local.conf
+
+.. literalinclude::  _source/local.conf2
+
+Download complete file :download:`local.conf2<./_source/local.conf2>`::
+
+หลังจากแก้ไขค่าแล้ว ให้ สั่งคำสั่งดังนี้ ::
+
+  ./unstack.sh
+  vi local.conf
+  ./stack.sh
+
+.. note:: ค่าที่อยู่ใน local.conf เป็นการสั่งให้ติดตั้ง service และ plugin แต่ยังไม่มีการ preconfig
