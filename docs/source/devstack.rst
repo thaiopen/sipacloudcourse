@@ -17,7 +17,7 @@ file Vagrant จากตัวอย่างด้านบน
 
   mkdir ~/Devstack
   cd ~/Devstack
-  wget
+  wget https://thaiopen.github.io/sipacloudcourse/_downloads/Vagrantfile2
   mv Vagrantfile2 Vagrantfile
   vagrant ssh server1
   sudo useradd -d /opt/stack stack

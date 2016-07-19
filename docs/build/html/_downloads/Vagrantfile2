@@ -13,8 +13,6 @@ Vagrant.configure("2") do |config|
     domain.nested = true
     domain.volume_cache = 'none'
     domain.storage :file, :size => '20G'
-    domain.storage :file, :size => '20G'
-    domain.storage :file, :size => '20G'
   end
   end
 end
