@@ -321,6 +321,50 @@ process  2 ซึ่งเป็น process ของ keystone  ``enter``  เ�
 <p class="first admonition-title">Note</p>
 <p class="last">ค่าที่อยู่ใน local.conf เป็นการสั่งให้ติดตั้ง service และ plugin แต่ยังไม่มีการ preconfig</p>
 </div>
+<p>devstack จะทำการสร้าง network ไว้ให้เป็นตัวอย่างที่ 10.0.0.0/24</p>
+<p>หลังจากที่สำเร็จ จะได้ผลลัพท์:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=========================</span>
+<span class="n">DevStack</span> <span class="n">Component</span> <span class="n">Timing</span>
+<span class="o">=========================</span>
+<span class="n">Total</span> <span class="n">runtime</span>         <span class="mi">2872</span>
+
+<span class="n">run_process</span>           <span class="mi">103</span>
+<span class="n">test_with_retry</span>         <span class="mi">3</span>
+<span class="n">pip_install</span>           <span class="mi">314</span>
+<span class="n">restart_apache_server</span>  <span class="mi">19</span>
+<span class="n">wait_for_service</span>       <span class="mi">14</span>
+<span class="n">yum_install</span>           <span class="mi">182</span>
+<span class="n">git_timed</span>             <span class="mi">1006</span>
+<span class="o">=========================</span>
+
+
+
+<span class="n">This</span> <span class="ow">is</span> <span class="n">your</span> <span class="n">host</span> <span class="n">IP</span> <span class="n">address</span><span class="p">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span>
+<span class="n">This</span> <span class="ow">is</span> <span class="n">your</span> <span class="n">host</span> <span class="n">IPv6</span> <span class="n">address</span><span class="p">:</span> <span class="p">::</span><span class="mi">1</span>
+<span class="n">Horizon</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">available</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span><span class="o">/</span><span class="n">dashboard</span>
+<span class="n">Keystone</span> <span class="ow">is</span> <span class="n">serving</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span><span class="p">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">v3</span><span class="o">/</span>
+<span class="n">The</span> <span class="n">default</span> <span class="n">users</span> <span class="n">are</span><span class="p">:</span> <span class="n">admin</span> <span class="ow">and</span> <span class="n">demo</span>
+<span class="n">The</span> <span class="n">password</span><span class="p">:</span> <span class="n">password</span>
+<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mf">54.781</span> <span class="o">|</span> <span class="n">WARNING</span><span class="p">:</span>
+<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mf">54.781</span> <span class="o">|</span> <span class="n">Using</span> <span class="n">lib</span><span class="o">/</span><span class="n">neutron</span><span class="o">-</span><span class="n">legacy</span> <span class="ow">is</span> <span class="n">deprecated</span><span class="p">,</span> <span class="ow">and</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">future</span>
+<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mf">54.781</span> <span class="o">|</span> <span class="n">stack</span><span class="o">.</span><span class="n">sh</span> <span class="n">completed</span> <span class="ow">in</span> <span class="mi">2872</span> <span class="n">seconds</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>ทดสอบ  <code class="docutils literal"><span class="pre">screen</span> <span class="pre">-x</span> <span class="pre">stack</span></code> และ list ด้วย <code class="docutils literal"><span class="pre">Ctrl</span> <span class="pre">a</span> <span class="pre">&quot;</span></code></p>
+<img alt="_images/devstack06.png" src="_images/devstack06.png" />
+<p>ทดสอบโดย browser <code class="docutils literal"><span class="pre">http://192.168.121.113/dashboard</span></code> เพื่อดูเมนู ที่เปลี่ยนไป จากรูปจะเห็นค่า
+config ของ network ที่ devstack เตรียมไว้ให้</p>
+<p>Network Menu</p>
+<img alt="_images/devstack07.png" src="_images/devstack07.png" />
+<p>Heat Orchestration Menu</p>
+<img alt="_images/devstack8.png" src="_images/devstack8.png" />
+<p>Compute Menu</p>
+<img alt="_images/devstack09.png" src="_images/devstack09.png" />
+<p>เมื่อเสร็จแล้วต้องการ สิ้นสุด ให้ <code class="docutils literal"><span class="pre">./unstack.sh</span></code> ทุกครั้ง แล้วค่อย stack.sh ใหม่</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Ctrl</span> <span class="n">a</span> <span class="n">d</span>
+<span class="o">./</span><span class="n">unstack</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>

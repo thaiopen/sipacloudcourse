@@ -139,3 +139,56 @@ Download complete file :download:`local.conf2<./_source/local.conf2>`::
   ./stack.sh
 
 .. note:: ค่าที่อยู่ใน local.conf เป็นการสั่งให้ติดตั้ง service และ plugin แต่ยังไม่มีการ preconfig
+devstack จะทำการสร้าง network ไว้ให้เป็นตัวอย่างที่ 10.0.0.0/24
+
+หลังจากที่สำเร็จ จะได้ผลลัพท์::
+
+  =========================
+  DevStack Component Timing
+  =========================
+  Total runtime         2872
+
+  run_process           103
+  test_with_retry         3
+  pip_install           314
+  restart_apache_server  19
+  wait_for_service       14
+  yum_install           182
+  git_timed             1006
+  =========================
+
+
+
+  This is your host IP address: 192.168.121.113
+  This is your host IPv6 address: ::1
+  Horizon is now available at http://192.168.121.113/dashboard
+  Keystone is serving at http://192.168.121.113:5000/v3/
+  The default users are: admin and demo
+  The password: password
+  2016-07-19 13:29:54.781 | WARNING:
+  2016-07-19 13:29:54.781 | Using lib/neutron-legacy is deprecated, and it will be removed in the future
+  2016-07-19 13:29:54.781 | stack.sh completed in 2872 seconds.
+
+ทดสอบ  ``screen -x stack`` และ list ด้วย ``Ctrl a "``
+
+.. image:: _images/devstack06.png
+
+ทดสอบโดย browser ``http://192.168.121.113/dashboard`` เพื่อดูเมนู ที่เปลี่ยนไป จากรูปจะเห็นค่า
+config ของ network ที่ devstack เตรียมไว้ให้
+
+Network Menu
+
+.. image:: _images/devstack07.png
+
+Heat Orchestration Menu
+
+.. image:: _images/devstack8.png
+
+Compute Menu
+
+.. image:: _images/devstack09.png
+
+เมื่อเสร็จแล้วต้องการ สิ้นสุด ให้ ``./unstack.sh`` ทุกครั้ง แล้วค่อย stack.sh ใหม่ ::
+
+  Ctrl a d
+  ./unstack.sh
