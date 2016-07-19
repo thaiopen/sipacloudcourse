@@ -84,7 +84,11 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="buildinfra.html">Build Infrastructure</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Openstack With DevStack</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#devstack-with-vagrant">Devstack with Vagrant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#devstack-with-vagrant">Devstack with Vagrant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-devstack">Install Devstack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#manage-devstack">Manage Devstack</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -169,6 +173,8 @@
 </pre></div>
 </div>
 <p>Download complete file <a class="reference download internal" href="_downloads/Vagrantfile2" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile2</span></code></a>:</p>
+<div class="section" id="install-devstack">
+<h3>Install Devstack<a class="headerlink" href="#install-devstack" title="Permalink to this headline">¶</a></h3>
 <p>หลังจาก ที่เราได้ทำการ vagrant up server1 เรียบร้อยแล้ว vm นี้มีขนาด RAM  8 Gb เพื่อใช้การทดสอบ
 openstack ทดสอบโดยการสร้าง Directory สำหรับการทดสอบ <code class="docutils literal"><span class="pre">Devstack</span></code> และ ให้ Download หรือ สร้าง
 file Vagrant จากตัวอย่างด้านบน</p>
@@ -191,14 +197,83 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">dev</span><span class="o">/</span><span class="n">devstack</span>
 <span class="n">cd</span> <span class="n">devstack</span>
 <span class="c1">## create local.conf</span>
-<span class="n">echo</span> <span class="o">&lt;&lt;</span> <span class="n">LOCAL</span> <span class="o">&gt;</span> <span class="n">local</span><span class="o">.</span><span class="n">conf</span>
+<span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="n">LOCAL</span> <span class="o">&gt;</span> <span class="n">local</span><span class="o">.</span><span class="n">conf</span>
 <span class="p">[[</span><span class="n">local</span><span class="o">|</span><span class="n">localrc</span><span class="p">]]</span>
 <span class="n">ADMIN_PASSWORD</span><span class="o">=</span><span class="n">password</span>
 <span class="n">DATABASE_PASSWORD</span><span class="o">=</span><span class="n">password</span>
 <span class="n">RABBIT_PASSWORD</span><span class="o">=</span><span class="n">password</span>
 <span class="n">SERVICE_PASSWORD</span><span class="o">=</span><span class="n">password</span>
 <span class="n">LOCAL</span>
+
+<span class="c1">## run stack.sh</span>
+<span class="o">./</span><span class="n">stack</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
+</div>
+<p>ผลลัพท์ที่ได้:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=========================</span>
+<span class="n">DevStack</span> <span class="n">Component</span> <span class="n">Timing</span>
+<span class="o">=========================</span>
+<span class="n">Total</span> <span class="n">runtime</span>         <span class="mi">3780</span>
+
+<span class="n">run_process</span>            <span class="mi">41</span>
+<span class="n">pip_install</span>           <span class="mi">535</span>
+<span class="n">restart_apache_server</span>   <span class="mi">8</span>
+<span class="n">wait_for_service</span>       <span class="mi">10</span>
+<span class="n">yum_install</span>           <span class="mi">181</span>
+<span class="n">git_timed</span>             <span class="mi">2075</span>
+<span class="o">=========================</span>
+
+
+
+<span class="n">This</span> <span class="ow">is</span> <span class="n">your</span> <span class="n">host</span> <span class="n">IP</span> <span class="n">address</span><span class="p">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span>
+<span class="n">This</span> <span class="ow">is</span> <span class="n">your</span> <span class="n">host</span> <span class="n">IPv6</span> <span class="n">address</span><span class="p">:</span> <span class="p">::</span><span class="mi">1</span>
+<span class="n">Horizon</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">available</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span><span class="o">/</span><span class="n">dashboard</span>
+<span class="n">Keystone</span> <span class="ow">is</span> <span class="n">serving</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span><span class="o">/</span><span class="n">identity</span><span class="o">/</span>
+<span class="n">The</span> <span class="n">default</span> <span class="n">users</span> <span class="n">are</span><span class="p">:</span> <span class="n">admin</span> <span class="ow">and</span> <span class="n">demo</span>
+<span class="n">The</span> <span class="n">password</span><span class="p">:</span> <span class="n">password</span>
+<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">10</span><span class="p">:</span><span class="mi">32</span><span class="p">:</span><span class="mf">41.679</span> <span class="o">|</span> <span class="n">WARNING</span><span class="p">:</span>
+<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">10</span><span class="p">:</span><span class="mi">32</span><span class="p">:</span><span class="mf">41.679</span> <span class="o">|</span> <span class="n">Using</span> <span class="n">lib</span><span class="o">/</span><span class="n">neutron</span><span class="o">-</span><span class="n">legacy</span> <span class="ow">is</span> <span class="n">deprecated</span><span class="p">,</span> <span class="ow">and</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">future</span>
+<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">10</span><span class="p">:</span><span class="mi">32</span><span class="p">:</span><span class="mf">41.679</span> <span class="o">|</span> <span class="n">stack</span><span class="o">.</span><span class="n">sh</span> <span class="n">completed</span> <span class="ow">in</span> <span class="mi">3780</span> <span class="n">seconds</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>เปิด browser ไปยัง <a class="reference external" href="http://192.168.121.113/dashboard">http://192.168.121.113/dashboard</a></p>
+<img alt="_images/devstack01.png" src="_images/devstack01.png" />
+<p>login ด้วย admin/password</p>
+<img alt="_images/devstack02.png" src="_images/devstack02.png" />
+</div>
+<div class="section" id="manage-devstack">
+<h3>Manage Devstack<a class="headerlink" href="#manage-devstack" title="Permalink to this headline">¶</a></h3>
+<p>เนื่องจาก devstack run service ต่างๆ ใน screen session ไม่มี service command สำหรับการ start stop
+ัดังนั้นจะต้องเข้าไปใน screen session มีขั้นตอนดังนี้:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">screen</span> <span class="o">-</span><span class="nb">list</span>
+
+<span class="n">There</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">screen</span> <span class="n">on</span><span class="p">:</span>
+      <span class="mf">28843.</span><span class="n">stack</span>     <span class="p">(</span><span class="n">Detached</span><span class="p">)</span>
+<span class="mi">1</span> <span class="n">Socket</span> <span class="ow">in</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">screen</span><span class="o">/</span><span class="n">S</span><span class="o">-</span><span class="n">vagrant</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>จะพบว่ามี screen session ชื่อ stack run อยู่:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">screen</span> <span class="o">-</span><span class="n">x</span> <span class="n">stack</span>
+</pre></div>
+</div>
+<p>หลังจาก run แล้ว จะเข้าสู่ session ของ screen ดังรูปด้านล่าง ซึ่งจะต้องใช้คำสั่งในการจัดการ โดยให้พิมพ์คำสั่ง
+ขึ้นต้นด้วย <code class="docutils literal"><span class="pre">Ctrl+b</span></code> แล้วตามด้วยค่าต่างๆ</p>
+<img alt="_images/devstack03.png" src="_images/devstack03.png" />
+<p>คำสั่งแสดง list ทั้งหมด:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Ctrl</span> <span class="n">a</span> <span class="s2">&quot;  (กด ctrl a แล้วปล่อย จากนั้นตามด้วย &quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/devstack04.png" src="_images/devstack04.png" />
+<p>เลือก process:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>*. เลื่อน cursor ไปยัง process ที่ต้องการ แล้วจึงกด ``enter``เพื่อเลือกไปดู process เช่น เลือนไปยัง
+process  2 ซึ่งเป็น process ของ keystone  ``enter``  เพื่อทำการ monitor ใหัสังเกตุดูบรรทัดล่างสุด
+จะมี เครื่องหมาย ``*``
+
+.. image:: _images/devstack05.png
+
+*. สามารถกด ``Ctrl a N`` โดยที่ N หมายถึงหมายเลข ของ process จะทำให้เข้าไปยัง process นั้นทันที
+</pre></div>
+</div>
 </div>
 </div>
 </div>
