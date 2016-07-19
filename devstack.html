@@ -87,6 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#devstack-with-vagrant">Devstack with Vagrant</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#install-devstack">Install Devstack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#manage-devstack">Manage Devstack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-devstack-plugin">Add Devstack plugin</a></li>
 </ul>
 </li>
 </ul>
@@ -209,7 +210,8 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <span class="o">./</span><span class="n">stack</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>
-<p>ผลลัพท์ที่ได้:</p>
+<p>script <code class="docutils literal"><span class="pre">stack.sh</span></code> จะทำการ download source code จาก github และมาติดตั้งให้เองอัตโนมัติ
+โดยdownload มาเก็บไปใน <code class="docutils literal"><span class="pre">/opt/stack</span></code> และผลลัพท์ที่ได้ จะสามารถใช้งาน openstack ได้ทันที:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=========================</span>
 <span class="n">DevStack</span> <span class="n">Component</span> <span class="n">Timing</span>
 <span class="o">=========================</span>
@@ -267,12 +269,57 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <p>เลือก process:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>*. เลื่อน cursor ไปยัง process ที่ต้องการ แล้วจึงกด ``enter``เพื่อเลือกไปดู process เช่น เลือนไปยัง
 process  2 ซึ่งเป็น process ของ keystone  ``enter``  เพื่อทำการ monitor ใหัสังเกตุดูบรรทัดล่างสุด
-จะมี เครื่องหมาย ``*``
-
-.. image:: _images/devstack05.png
-
+จะมี เครื่องหมาย ``*`` รูปด้านล่าง
 *. สามารถกด ``Ctrl a N`` โดยที่ N หมายถึงหมายเลข ของ process จะทำให้เข้าไปยัง process นั้นทันที
 </pre></div>
+</div>
+<img alt="_images/devstack05.png" src="_images/devstack05.png" />
+<p>ออกจาก stack:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">screen</span> <span class="o">-</span><span class="n">d</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-devstack-plugin">
+<h3>Add Devstack plugin<a class="headerlink" href="#add-devstack-plugin" title="Permalink to this headline">¶</a></h3>
+<p>สามารถทำได้ด้วยการ เพิ่มเติมค่าใน local.conf</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="n">local</span><span class="o">|</span><span class="n">localrc</span><span class="p">]]</span>
+<span class="c1">#OFFLINE=True</span>
+
+<span class="n">ADMIN_PASSWORD</span><span class="o">=</span><span class="n">password</span>
+<span class="n">DATABASE_PASSWORD</span><span class="o">=</span><span class="n">password</span>
+<span class="n">RABBIT_PASSWORD</span><span class="o">=</span><span class="n">password</span>
+<span class="n">SERVICE_PASSWORD</span><span class="o">=</span><span class="n">password</span>
+
+<span class="c1">#1 Do not use Nova-Network</span>
+<span class="n">disable_service</span> <span class="n">n</span><span class="o">-</span><span class="n">net</span>
+<span class="c1"># Enable Neutron service</span>
+<span class="n">ENABLED_SERVICES</span><span class="o">+=</span><span class="p">,</span><span class="n">q</span><span class="o">-</span><span class="n">svc</span><span class="p">,</span><span class="n">q</span><span class="o">-</span><span class="n">dhcp</span><span class="p">,</span><span class="n">q</span><span class="o">-</span><span class="n">meta</span><span class="p">,</span><span class="n">q</span><span class="o">-</span><span class="n">agt</span><span class="p">,</span><span class="n">q</span><span class="o">-</span><span class="n">l3</span>
+
+<span class="c1">#2 Heat service</span>
+<span class="n">enable_service</span> <span class="n">heat</span> <span class="n">h</span><span class="o">-</span><span class="n">eng</span> <span class="n">h</span><span class="o">-</span><span class="n">api</span> <span class="n">h</span><span class="o">-</span><span class="n">api</span><span class="o">-</span><span class="n">cfn</span> <span class="n">h</span><span class="o">-</span><span class="n">api</span><span class="o">-</span><span class="n">cw</span>
+
+<span class="n">CEILOMETER_BACKEND</span><span class="o">=</span><span class="n">mongodb</span>
+<span class="n">CEILOMETER_NOTIFICATION_TOPICS</span><span class="o">=</span><span class="n">notifications</span><span class="p">,</span><span class="n">profiler</span>
+
+<span class="c1">#3 enable plugin</span>
+<span class="n">enable_plugin</span> <span class="n">ceilometer</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">ceilometer</span>
+<span class="n">enable_plugin</span> <span class="n">aodh</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">aodh</span>
+
+<span class="n">enable_plugin</span> <span class="n">neutron</span><span class="o">-</span><span class="n">lbaas</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">neutron</span><span class="o">-</span><span class="n">lbaas</span>
+<span class="n">enable_plugin</span> <span class="n">octavia</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">octavia</span>
+<span class="n">enable_plugin</span> <span class="n">barbican</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">barbican</span>
+</pre></div>
+</div>
+<p>Download complete file <a class="reference download internal" href="_downloads/local.conf2" download=""><code class="xref download docutils literal"><span class="pre">local.conf2</span></code></a>:</p>
+<p>หลังจากแก้ไขค่าแล้ว ให้ สั่งคำสั่งดังนี้</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">unstack</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">vi</span> <span class="n">local</span><span class="o">.</span><span class="n">conf</span>
+<span class="o">./</span><span class="n">stack</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">ค่าที่อยู่ใน local.conf เป็นการสั่งให้ติดตั้ง service และ plugin แต่ยังไม่มีการ preconfig</p>
 </div>
 </div>
 </div>
