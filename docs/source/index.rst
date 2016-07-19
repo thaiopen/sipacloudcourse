@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    buildinfra
+   devstack
 
 Indices and tables
 ==================
