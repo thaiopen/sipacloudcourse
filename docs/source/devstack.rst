@@ -19,6 +19,27 @@ file Vagrant จากตัวอย่างด้านบน
   cd ~/Devstack
   wget https://thaiopen.github.io/sipacloudcourse/_downloads/Vagrantfile2
   mv Vagrantfile2 Vagrantfile
+
+  ## ssh to vagrant
   vagrant ssh server1
-  sudo useradd -d /opt/stack stack
-  sudo visudo
+
+  ## change to root
+  sudo su -
+  useradd -d /opt/stack stack
+  echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+  exit
+
+  ## on normal vagrant user
+  sudo dnf install git
+  git clone https://git.openstack.org/openstack-dev/devstack
+  cd devstack
+  ## create local.conf
+  echo << LOCAL > local.conf
+  [[local|localrc]]
+  ADMIN_PASSWORD=password
+  DATABASE_PASSWORD=password
+  RABBIT_PASSWORD=password
+  SERVICE_PASSWORD=password
+  LOCAL
+
+  
