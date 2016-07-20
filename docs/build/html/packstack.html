@@ -158,7 +158,54 @@
 <div class="section" id="vagrant">
 <h3>vagrant<a class="headerlink" href="#vagrant" title="Permalink to this headline">¶</a></h3>
 <p>สร้าง directory ชื่อ openstack และภายในมี Vagrantfile ดังนี้</p>
-<p>Download complete file <a class="reference download internal" href="_downloads/Vagrantfile3" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile3</span></code></a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span># -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$script = &lt;&lt;SCRIPT
+echo &quot;run provisioning...&quot;
+echo &#39;root:password&#39; | sudo chpasswd
+sudo sed -i s/SELINUX=enforcing/SELINUX=disabled/g /etc/selinux/config
+yum install -y epel-release
+yum install -y centos-release-openstack-mitaka
+yum update -y
+yum install -y openstack-packstack
+SCRIPT
+
+Vagrant.configure(&quot;2&quot;) do |config|
+  config.vm.box = &quot;centos/7&quot;
+  config.vm.define :controller do |node|
+            node.vm.network :private_network, :ip =&gt; &quot;10.0.0.10&quot;
+            node.vm.network :private_network, :ip =&gt; &quot;20.0.0.10&quot;
+            node.vm.provider :libvirt do |domain|
+              domain.uri = &#39;qemu+unix:///system&#39;
+              domain.driver = &#39;kvm&#39;
+              domain.host = &quot;server1.example.com&quot;
+              domain.memory = 8192
+              domain.cpus = 4
+              domain.nested = true
+              domain.volume_cache = &#39;none&#39;
+              domain.storage :file, :size =&gt; &#39;20G&#39;
+            end
+    node.vm.provision &quot;shell&quot;, inline: $script
+  end
+  config.vm.define :compute do |node|
+            node.vm.network :private_network, :ip =&gt; &quot;10.0.0.11&quot;
+            node.vm.network :private_network, :ip =&gt; &quot;20.0.0.11&quot;
+            node.vm.provider :libvirt do |domain|
+              domain.uri = &#39;qemu+unix:///system&#39;
+              domain.driver = &#39;kvm&#39;
+              domain.host = &quot;server2.example.com&quot;
+              domain.memory = 4096
+              domain.cpus = 2
+              domain.nested = true
+              domain.volume_cache = &#39;none&#39;
+            end
+    node.vm.provision &quot;shell&quot;, inline: $script
+  end
+end
+</pre></div>
+</div>
+<p>Download complete file <code class="xref download docutils literal"><span class="pre">Vagrantfile3</span></code></p>
 <p>เข้าไปยัง controller</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">packstack</span>
 <span class="n">cd</span> <span class="n">packstack</span>
