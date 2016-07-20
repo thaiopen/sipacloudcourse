@@ -257,15 +257,15 @@ default เนื่องจากเราไม่ได้ปรับแต
       link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
   2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
       link/ether 52:54:00:19:c1:e0 brd ff:ff:ff:ff:ff:ff
-  3: virbr0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default qlen 1000
-      link/ether 52:54:00:e8:8c:c7 brd ff:ff:ff:ff:ff:ff
-  4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN mode DEFAULT group default qlen 1000
-      link/ether 52:54:00:e8:8c:c7 brd ff:ff:ff:ff:ff:ff
-  5: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
-      link/ether 9e:2f:eb:e4:74:ec brd ff:ff:ff:ff:ff:ff
-  10: br-int: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
-      link/ether 8a:24:e0:d5:03:42 brd ff:ff:ff:ff:ff:ff
-  11: br-ex: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1
-      link/ether fe:8e:5d:8c:1c:40 brd ff:ff:ff:ff:ff:ff
-  12: br-tun: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+  3: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+      link/ether 1e:33:d0:b4:57:f9 brd ff:ff:ff:ff:ff:ff
+  4: br-tun: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
       link/ether ae:0f:68:a5:a6:48 brd ff:ff:ff:ff:ff:ff
+  7: br-int: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+      link/ether 8a:24:e0:d5:03:42 brd ff:ff:ff:ff:ff:ff
+  9: br-ex: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1
+      link/ether fe:8e:5d:8c:1c:40 brd ff:ff:ff:ff:ff:ff
+  11: virbr0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default qlen 1000
+      link/ether 52:54:00:e8:8c:c7 brd ff:ff:ff:ff:ff:ff
+  12: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN mode DEFAULT group default qlen 1000
+      link/ether 52:54:00:e8:8c:c7 brd ff:ff:ff:ff:ff:ff
