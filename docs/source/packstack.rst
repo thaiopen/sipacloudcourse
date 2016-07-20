@@ -9,7 +9,7 @@ vagrant
 -------
 สร้าง directory ชื่อ openstack และภายในมี Vagrantfile ดังนี้
 
-.. literalinclude::  _source/Vagrantfile12
+.. literalinclude::  _source/Vagrantfile3
 
 Download complete file :download:`Vagrantfile3 <./Vagrantfile3>`
 
