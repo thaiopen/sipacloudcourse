@@ -247,6 +247,10 @@ file Vagrant จากตัวอย่างด้านบน</p>
 </div>
 <div class="section" id="manage-devstack">
 <h3>Manage Devstack<a class="headerlink" href="#manage-devstack" title="Permalink to this headline">¶</a></h3>
+<p>ให้ทำการ enable service เนื่องจากอาจมีการ restart vm:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">enable</span> <span class="n">openvswitch</span> <span class="n">mariadb</span> <span class="n">rabbitmq</span><span class="o">-</span><span class="n">server</span>
+</pre></div>
+</div>
 <p>เนื่องจาก devstack run service ต่างๆ ใน screen session ไม่มี service command สำหรับการ start stop
 ัดังนั้นจะต้องเข้าไปใน screen session มีขั้นตอนดังนี้:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">screen</span> <span class="o">-</span><span class="nb">list</span>

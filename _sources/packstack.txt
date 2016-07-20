@@ -15,19 +15,17 @@ Download complete file :download:`Vagrantfile3 <./_source/Vagrantfile3>`
 
 เข้าไปยัง controller
 ::
-    mkdir packstack
+    mkdir ~/packstack
     cd packstack
-    wget
+    wget https://thaiopen.github.io/sipacloudcourse/_downloads/Vagrantfile3
     mv Vagrantfile3 Vagrantfile
-    vagrant ssh controller
-    sudo su -
-    //set selinux to disable
-    getenforce
-    sed -i s/SELINUX=enforcing/SELINUX=disabled/g /etc/selinux/config
-    --or--
-    vi /etc/selinux/config
 
-    setenforce 0
+    vagrant up --no-parallel
+    vagrant ssh controller
+    ping compute
+    getenforce
+    systemctl is-active NetworkManager
+    systemctl is-active firewalld
 
 Disk prepare for cinder
 -----------------------
@@ -38,10 +36,11 @@ Disk prepare for cinder
     vgcreate cinder-volumes /dev/vdb
     packstack --gen-answer-file  answerfile001.txt
 
+    ## การแก้ไขด้วยการใช้คำสั่ง ``sed``
     sed -i.orig s/192.168.121.158/10.0.0.10/g  answerfile001.txt
     sed -i s/CONFIG_HEAT_INSTALL=n/CONFIG_HEAT_INSTALL=y/g answerfile001.txt
 
-	--ตัวอย่าง--
+	  ## ตัวอย่าง
     grep -n ADMIN_PW  answerfile001.txt
     vim  answerfile001.txt +(line no)
 
@@ -61,7 +60,7 @@ Disk prepare for cinder
     CONFIG_HORIZON_SSL=y
     CONFIG_PROVISION_DEMO=n
 
-Download complete file :download:`answerfile001.txt <./answerfile001.txt>`.
+Download complete file :download:`answerfile001.txt <./_source/answerfile001.txt>`.
 
 Run
 ---
@@ -78,11 +77,17 @@ Run
 .. image:: _images/openstack001.png
 
 
-Network Config
---------------
+Network Management
+------------------
 .. note::
   เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth1
   เป็น management network และ external network รวมกัน
+
+packstack จะทำหน้าที่สร้าง ระบบโครงสร้าง virtual network (ovs-system)ให้ ได้แก่ bridge ชื่อ
+ิbr-ex, br-int, br-tun และ เราจะต้องเชื่อมต่อ bridge นี้กับ interface จริง (physical interface)
+::
+  # openvswitch command
+  ovs-vsctl show
 
 backup::
 
