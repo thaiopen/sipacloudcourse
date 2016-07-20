@@ -89,7 +89,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#vagrant">vagrant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#disk-prepare-for-cinder">Disk prepare for cinder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#run">Run</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#network-config">Network Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#network-management">Network Management</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#upload-image">upload image</a></li>
 </ul>
 </li>
@@ -165,6 +165,20 @@ $script = &lt;&lt;SCRIPT
 echo &quot;run provisioning...&quot;
 echo &#39;root:password&#39; | sudo chpasswd
 sudo sed -i s/SELINUX=enforcing/SELINUX=disabled/g /etc/selinux/config
+sudo systemctl disable NetworkManager firewalld
+sudo systemctl enable network
+
+HOST=$(cat &lt;&lt; HOST
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+10.0.0.10  controller.example.com  controller
+10.0.0.11  compute.example.com compute
+HOST
+)
+
+sudo echo &quot;$HOST&quot; &gt; /etc/hosts
+sudo echo &quot;nameserver 8.8.8.8&quot; &gt; /etc/resolv.conf
+
 yum install -y epel-release
 yum install -y centos-release-openstack-mitaka
 yum update -y
@@ -176,50 +190,48 @@ Vagrant.configure(&quot;2&quot;) do |config|
   config.vm.define :controller do |node|
             node.vm.network :private_network, :ip =&gt; &quot;10.0.0.10&quot;
             node.vm.network :private_network, :ip =&gt; &quot;20.0.0.10&quot;
+            node.vm.hostname = &quot;controller.example.com&quot;
             node.vm.provider :libvirt do |domain|
               domain.uri = &#39;qemu+unix:///system&#39;
               domain.driver = &#39;kvm&#39;
-              domain.host = &quot;server1.example.com&quot;
               domain.memory = 8192
               domain.cpus = 4
               domain.nested = true
               domain.volume_cache = &#39;none&#39;
               domain.storage :file, :size =&gt; &#39;20G&#39;
             end
-    node.vm.provision &quot;shell&quot;, inline: $script
+            node.vm.provision &quot;shell&quot;, inline: $script
   end
   config.vm.define :compute do |node|
             node.vm.network :private_network, :ip =&gt; &quot;10.0.0.11&quot;
             node.vm.network :private_network, :ip =&gt; &quot;20.0.0.11&quot;
+            node.vm.hostname= &quot;compute.example.com&quot;
             node.vm.provider :libvirt do |domain|
               domain.uri = &#39;qemu+unix:///system&#39;
               domain.driver = &#39;kvm&#39;
-              domain.host = &quot;server2.example.com&quot;
               domain.memory = 4096
               domain.cpus = 2
               domain.nested = true
               domain.volume_cache = &#39;none&#39;
             end
-    node.vm.provision &quot;shell&quot;, inline: $script
+            node.vm.provision &quot;shell&quot;, inline: $script
   end
 end
 </pre></div>
 </div>
 <p>Download complete file <a class="reference download internal" href="_downloads/Vagrantfile3" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile3</span></code></a></p>
 <p>เข้าไปยัง controller</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">packstack</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">~/</span><span class="n">packstack</span>
 <span class="n">cd</span> <span class="n">packstack</span>
-<span class="n">wget</span>
+<span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">thaiopen</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">sipacloudcourse</span><span class="o">/</span><span class="n">_downloads</span><span class="o">/</span><span class="n">Vagrantfile3</span>
 <span class="n">mv</span> <span class="n">Vagrantfile3</span> <span class="n">Vagrantfile</span>
-<span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">controller</span>
-<span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
-<span class="o">//</span><span class="nb">set</span> <span class="n">selinux</span> <span class="n">to</span> <span class="n">disable</span>
-<span class="n">getenforce</span>
-<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="n">s</span><span class="o">/</span><span class="n">SELINUX</span><span class="o">=</span><span class="n">enforcing</span><span class="o">/</span><span class="n">SELINUX</span><span class="o">=</span><span class="n">disabled</span><span class="o">/</span><span class="n">g</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">selinux</span><span class="o">/</span><span class="n">config</span>
-<span class="o">--</span><span class="ow">or</span><span class="o">--</span>
-<span class="n">vi</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">selinux</span><span class="o">/</span><span class="n">config</span>
 
-<span class="n">setenforce</span> <span class="mi">0</span>
+<span class="n">vagrant</span> <span class="n">up</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">parallel</span>
+<span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">controller</span>
+<span class="n">ping</span> <span class="n">compute</span>
+<span class="n">getenforce</span>
+<span class="n">systemctl</span> <span class="ow">is</span><span class="o">-</span><span class="n">active</span> <span class="n">NetworkManager</span>
+<span class="n">systemctl</span> <span class="ow">is</span><span class="o">-</span><span class="n">active</span> <span class="n">firewalld</span>
 </pre></div>
 </div>
 </div>
@@ -230,10 +242,11 @@ end
 <span class="n">vgcreate</span> <span class="n">cinder</span><span class="o">-</span><span class="n">volumes</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vdb</span>
 <span class="n">packstack</span> <span class="o">--</span><span class="n">gen</span><span class="o">-</span><span class="n">answer</span><span class="o">-</span><span class="n">file</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
 
+<span class="c1">## การแก้ไขด้วยการใช้คำสั่ง ``sed``</span>
 <span class="n">sed</span> <span class="o">-</span><span class="n">i</span><span class="o">.</span><span class="n">orig</span> <span class="n">s</span><span class="o">/</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.158</span><span class="o">/</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="o">/</span><span class="n">g</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
 <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="n">s</span><span class="o">/</span><span class="n">CONFIG_HEAT_INSTALL</span><span class="o">=</span><span class="n">n</span><span class="o">/</span><span class="n">CONFIG_HEAT_INSTALL</span><span class="o">=</span><span class="n">y</span><span class="o">/</span><span class="n">g</span> <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
 
-    <span class="o">--</span><span class="n">ตัวอย่าง</span><span class="o">--</span>
+      <span class="c1">## ตัวอย่าง</span>
 <span class="n">grep</span> <span class="o">-</span><span class="n">n</span> <span class="n">ADMIN_PW</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
 <span class="n">vim</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span> <span class="o">+</span><span class="p">(</span><span class="n">line</span> <span class="n">no</span><span class="p">)</span>
 
@@ -254,7 +267,7 @@ end
 <span class="n">CONFIG_PROVISION_DEMO</span><span class="o">=</span><span class="n">n</span>
 </pre></div>
 </div>
-<p>Download complete file <a class="reference download internal" href="_downloads/answerfile001.txt" download=""><code class="xref download docutils literal"><span class="pre">answerfile001.txt</span></code></a>.</p>
+<p>Download complete file <code class="xref download docutils literal"><span class="pre">answerfile001.txt</span></code>.</p>
 </div>
 <div class="section" id="run">
 <h3>Run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h3>
@@ -265,12 +278,18 @@ end
 <p>ผลการ Run</p>
 <img alt="_images/openstack001.png" src="_images/openstack001.png" />
 </div>
-<div class="section" id="network-config">
-<h3>Network Config<a class="headerlink" href="#network-config" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="network-management">
+<h3>Network Management<a class="headerlink" href="#network-management" title="Permalink to this headline">¶</a></h3>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth1
 เป็น management network และ external network รวมกัน</p>
+</div>
+<p>packstack จะทำหน้าที่สร้าง ระบบโครงสร้าง virtual network (ovs-system)ให้ ได้แก่ bridge ชื่อ
+ิbr-ex, br-int, br-tun และ เราจะต้องเชื่อมต่อ bridge นี้กับ interface จริง (physical interface)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># openvswitch command</span>
+<span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="n">show</span>
+</pre></div>
 </div>
 <p>backup:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span><span class="n">ifcfg</span><span class="o">-</span><span class="n">eth1</span>  <span class="o">/</span><span class="n">root</span>

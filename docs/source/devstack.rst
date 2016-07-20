@@ -86,6 +86,10 @@ login ด้วย admin/password
 
 Manage Devstack
 ***************
+ให้ทำการ enable service เนื่องจากอาจมีการ restart vm::
+
+  sudo systemctl enable openvswitch mariadb rabbitmq-server
+  
 เนื่องจาก devstack run service ต่างๆ ใน screen session ไม่มี service command สำหรับการ start stop
 ัดังนั้นจะต้องเข้าไปใน screen session มีขั้นตอนดังนี้::
 
