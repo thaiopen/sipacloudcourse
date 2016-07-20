@@ -207,8 +207,8 @@ default เนื่องจากเราไม่ได้ปรับแต
       Manager "ptcp:6640:127.0.0.1"
           is_connected: true
       Bridge br-ex
-          Port "qg-f5f7f66f-0e"
-              Interface "qg-f5f7f66f-0e"
+          Port "qg-237cb003-ee"
+              Interface "qg-237cb003-ee"
                   type: internal
           Port br-ex
               Interface br-ex
@@ -231,23 +231,24 @@ default เนื่องจากเราไม่ได้ปรับแต
           Port br-int
               Interface br-int
                   type: internal
-          Port "qr-e987dcb7-81"
+          Port "tap7ee7f8f3-62"
               tag: 1
-              Interface "qr-e987dcb7-81"
+              Interface "tap7ee7f8f3-62"
                   type: internal
-          Port "tapcb3af139-63"
+          Port "qr-d9f37ff9-d4"
               tag: 1
-              Interface "tapcb3af139-63"
+              Interface "qr-d9f37ff9-d4"
                   type: internal
-          Port "qr-940f7292-e0"
+          Port "qr-d7da2f54-f0"
               tag: 1
-              Interface "qr-940f7292-e0"
+              Interface "qr-d7da2f54-f0"
                   type: internal
           Port patch-tun
               Interface patch-tun
                   type: patch
                   options: {peer=patch-int}
       ovs_version: "2.5.0"
+
 
 ดู interface ด้วย ip link::
 
