@@ -89,7 +89,7 @@ Manage Devstack
 ให้ทำการ enable service เนื่องจากอาจมีการ restart vm::
 
   sudo systemctl enable openvswitch mariadb rabbitmq-server
-  
+
 เนื่องจาก devstack run service ต่างๆ ใน screen session ไม่มี service command สำหรับการ start stop
 ัดังนั้นจะต้องเข้าไปใน screen session มีขั้นตอนดังนี้::
 
@@ -192,7 +192,79 @@ Compute Menu
 
 .. image:: _images/devstack09.png
 
-เมื่อเสร็จแล้วต้องการ สิ้นสุด ให้ ``./unstack.sh`` ทุกครั้ง แล้วค่อย stack.sh ใหม่ ::
+.. note::
+
+  เมื่อเสร็จแล้วต้องการ สิ้นสุด ให้ ``./unstack.sh`` ทุกครั้ง แล้วค่อย stack.sh ใหม่ ::
 
   Ctrl a d
   ./unstack.sh
+
+ค่า default ของ network ที่สร้างหลังจาก ที่ enable neutron โดยมี openswitch เป็นคนสร้างให้ เป็นค่า
+default เนื่องจากเราไม่ได้ปรับแต่ค่าตัวแปรใดๆใน local.conf ให้พิมพ์คำสั่ง openvswitch ``ovs-vsctl show``::
+
+  sudo ovs-vsctl show
+  66a8c5c3-6f2c-41a3-9756-9ac89faf1628
+      Manager "ptcp:6640:127.0.0.1"
+          is_connected: true
+      Bridge br-ex
+          Port "qg-f5f7f66f-0e"
+              Interface "qg-f5f7f66f-0e"
+                  type: internal
+          Port br-ex
+              Interface br-ex
+                  type: internal
+      Bridge br-tun
+          Controller "tcp:127.0.0.1:6633"
+              is_connected: true
+          fail_mode: secure
+          Port br-tun
+              Interface br-tun
+                  type: internal
+          Port patch-int
+              Interface patch-int
+                  type: patch
+                  options: {peer=patch-tun}
+      Bridge br-int
+          Controller "tcp:127.0.0.1:6633"
+              is_connected: true
+          fail_mode: secure
+          Port br-int
+              Interface br-int
+                  type: internal
+          Port "qr-e987dcb7-81"
+              tag: 1
+              Interface "qr-e987dcb7-81"
+                  type: internal
+          Port "tapcb3af139-63"
+              tag: 1
+              Interface "tapcb3af139-63"
+                  type: internal
+          Port "qr-940f7292-e0"
+              tag: 1
+              Interface "qr-940f7292-e0"
+                  type: internal
+          Port patch-tun
+              Interface patch-tun
+                  type: patch
+                  options: {peer=patch-int}
+      ovs_version: "2.5.0"
+
+ดู interface ด้วย ip link::
+
+  $ ip link
+  1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1
+      link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+  2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+      link/ether 52:54:00:19:c1:e0 brd ff:ff:ff:ff:ff:ff
+  3: virbr0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default qlen 1000
+      link/ether 52:54:00:e8:8c:c7 brd ff:ff:ff:ff:ff:ff
+  4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN mode DEFAULT group default qlen 1000
+      link/ether 52:54:00:e8:8c:c7 brd ff:ff:ff:ff:ff:ff
+  5: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+      link/ether 9e:2f:eb:e4:74:ec brd ff:ff:ff:ff:ff:ff
+  10: br-int: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+      link/ether 8a:24:e0:d5:03:42 brd ff:ff:ff:ff:ff:ff
+  11: br-ex: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1
+      link/ether fe:8e:5d:8c:1c:40 brd ff:ff:ff:ff:ff:ff
+  12: br-tun: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+      link/ether ae:0f:68:a5:a6:48 brd ff:ff:ff:ff:ff:ff
