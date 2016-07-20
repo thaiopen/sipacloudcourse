@@ -262,36 +262,41 @@ end
 </div>
 <div class="section" id="network-config">
 <h3>Network Config<a class="headerlink" href="#network-config" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth1
+เป็น management network และ external network รวมกัน</p>
+</div>
 <p>backup:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span><span class="n">ifcfg</span><span class="o">-</span><span class="n">eth1</span>  <span class="o">/</span><span class="n">root</span>
 <span class="n">cp</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span><span class="n">ifcfg</span><span class="o">-</span><span class="n">eth1</span>  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span><span class="n">ifcfg</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
 <span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span>
 </pre></div>
 </div>
-<p>edit:</p>
+<p>edit ค่าของ interface eth1:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vi</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">eth1</span>
 
-    <span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
-    <span class="n">DEVICE</span><span class="o">=</span><span class="n">eth1</span>
-    <span class="n">HWADDR</span><span class="o">=</span><span class="mi">52</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">95</span><span class="p">:</span><span class="n">c4</span><span class="p">:</span><span class="n">b4</span>
-    <span class="n">TYPE</span><span class="o">=</span><span class="n">OVSPort</span>
-    <span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
-    <span class="n">OVS_BRIDGE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+      <span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
+      <span class="n">DEVICE</span><span class="o">=</span><span class="n">eth1</span>
+      <span class="n">HWADDR</span><span class="o">=</span><span class="mi">52</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">95</span><span class="p">:</span><span class="n">c4</span><span class="p">:</span><span class="n">b4</span>
+      <span class="n">TYPE</span><span class="o">=</span><span class="n">OVSPort</span>
+      <span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
+      <span class="n">OVS_BRIDGE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
 
-    <span class="n">vi</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+      <span class="n">vi</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
 
-    <span class="n">DEVICE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-    <span class="n">BOOTPROTO</span><span class="o">=</span><span class="n">static</span>
-    <span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
-    <span class="n">TYPE</span><span class="o">=</span><span class="n">OVSBridge</span>
-    <span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
-    <span class="n">USERCTL</span><span class="o">=</span><span class="n">yes</span>
-    <span class="n">PEERDNS</span><span class="o">=</span><span class="n">yes</span>
-    <span class="n">IPV6INIT</span><span class="o">=</span><span class="n">no</span>
-    <span class="n">IPADDR</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span>
-    <span class="n">NETMASK</span><span class="o">=</span><span class="mf">255.255</span><span class="o">.</span><span class="mf">255.0</span>
-    <span class="n">GATEWAY</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.1</span>
-    <span class="n">DNS1</span><span class="o">=</span><span class="mf">8.8</span><span class="o">.</span><span class="mf">8.8</span>
+      <span class="n">DEVICE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+      <span class="n">BOOTPROTO</span><span class="o">=</span><span class="n">static</span>
+      <span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
+      <span class="n">TYPE</span><span class="o">=</span><span class="n">OVSBridge</span>
+      <span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
+      <span class="n">USERCTL</span><span class="o">=</span><span class="n">yes</span>
+      <span class="n">PEERDNS</span><span class="o">=</span><span class="n">yes</span>
+      <span class="n">IPV6INIT</span><span class="o">=</span><span class="n">no</span>
+      <span class="n">IPADDR</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span>
+      <span class="n">NETMASK</span><span class="o">=</span><span class="mf">255.255</span><span class="o">.</span><span class="mf">255.0</span>
+      <span class="n">GATEWAY</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.1</span>
+      <span class="n">DNS1</span><span class="o">=</span><span class="mf">8.8</span><span class="o">.</span><span class="mf">8.8</span>
 </pre></div>
 </div>
 <p>restart:</p>

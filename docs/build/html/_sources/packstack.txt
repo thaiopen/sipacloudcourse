@@ -120,15 +120,19 @@ Run
 
 Network Config
 --------------
+.. note::
+  เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth1
+  เป็น management network และ external network รวมกัน
+
 backup::
 
 	cp /etc/sysconfig/network-scripts/ifcfg-eth1  /root
 	cp /etc/sysconfig/network-scripts/ifcfg-eth1  /etc/sysconfig/network-scripts/ifcfg-br-ex
 	cd /etc/sysconfig/network-scripts/
 
-edit::
+edit ค่าของ interface eth1::
 
-    vi ifcfg-eth1
+  vi ifcfg-eth1
 
 	ONBOOT=yes
 	DEVICE=eth1
