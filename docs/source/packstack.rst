@@ -11,7 +11,7 @@ vagrant
 
 .. literalinclude::  _source/Vagrantfile3
 
-Download complete file :download:`Vagrantfile3 <./Vagrantfile3>`
+Download complete file :download:`Vagrantfile3 <./_source/Vagrantfile3>`
 
 เข้าไปยัง controller
 ::
