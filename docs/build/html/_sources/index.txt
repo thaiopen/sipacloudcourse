@@ -13,6 +13,7 @@ Contents:
 
    buildinfra
    devstack
+   packstack
 
 Indices and tables
 ==================
