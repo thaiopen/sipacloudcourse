@@ -24,3 +24,6 @@ enable_plugin aodh https://git.openstack.org/openstack/aodh
 enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
 enable_plugin octavia https://git.openstack.org/openstack/octavia
 enable_plugin barbican https://git.openstack.org/openstack/barbican
+
+IMAGE_URLS+=",https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img"
+IMAGE_URLS+=",http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2"

@@ -314,6 +314,9 @@ process  2 ซึ่งเป็น process ของ keystone  ``enter``  เ�
 <span class="n">enable_plugin</span> <span class="n">neutron</span><span class="o">-</span><span class="n">lbaas</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">neutron</span><span class="o">-</span><span class="n">lbaas</span>
 <span class="n">enable_plugin</span> <span class="n">octavia</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">octavia</span>
 <span class="n">enable_plugin</span> <span class="n">barbican</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">barbican</span>
+
+<span class="n">IMAGE_URLS</span><span class="o">+=</span><span class="s2">&quot;,https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img&quot;</span>
+<span class="n">IMAGE_URLS</span><span class="o">+=</span><span class="s2">&quot;,http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2&quot;</span>
 </pre></div>
 </div>
 <p>Download complete file <a class="reference download internal" href="_downloads/local.conf2" download=""><code class="xref download docutils literal"><span class="pre">local.conf2</span></code></a>:</p>
@@ -366,9 +369,80 @@ config ของ network ที่ devstack เตรียมไว้ให้
 <img alt="_images/devstack8.png" src="_images/devstack8.png" />
 <p>Compute Menu</p>
 <img alt="_images/devstack09.png" src="_images/devstack09.png" />
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
 <p>เมื่อเสร็จแล้วต้องการ สิ้นสุด ให้ <code class="docutils literal"><span class="pre">./unstack.sh</span></code> ทุกครั้ง แล้วค่อย stack.sh ใหม่</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Ctrl</span> <span class="n">a</span> <span class="n">d</span>
-<span class="o">./</span><span class="n">unstack</span><span class="o">.</span><span class="n">sh</span>
+<p class="last">Ctrl a d
+./unstack.sh</p>
+</div>
+<p>ค่า default ของ network ที่สร้างหลังจาก ที่ enable neutron โดยมี openswitch เป็นคนสร้างให้ เป็นค่า
+default เนื่องจากเราไม่ได้ปรับแต่ค่าตัวแปรใดๆใน local.conf ให้พิมพ์คำสั่ง openvswitch <code class="docutils literal"><span class="pre">ovs-vsctl</span> <span class="pre">show</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="n">show</span>
+<span class="mi">66</span><span class="n">a8c5c3</span><span class="o">-</span><span class="mi">6</span><span class="n">f2c</span><span class="o">-</span><span class="mi">41</span><span class="n">a3</span><span class="o">-</span><span class="mi">9756</span><span class="o">-</span><span class="mi">9</span><span class="n">ac89faf1628</span>
+    <span class="n">Manager</span> <span class="s2">&quot;ptcp:6640:127.0.0.1&quot;</span>
+        <span class="n">is_connected</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">Bridge</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+        <span class="n">Port</span> <span class="s2">&quot;qg-f5f7f66f-0e&quot;</span>
+            <span class="n">Interface</span> <span class="s2">&quot;qg-f5f7f66f-0e&quot;</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+        <span class="n">Port</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+            <span class="n">Interface</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+    <span class="n">Bridge</span> <span class="n">br</span><span class="o">-</span><span class="n">tun</span>
+        <span class="n">Controller</span> <span class="s2">&quot;tcp:127.0.0.1:6633&quot;</span>
+            <span class="n">is_connected</span><span class="p">:</span> <span class="n">true</span>
+        <span class="n">fail_mode</span><span class="p">:</span> <span class="n">secure</span>
+        <span class="n">Port</span> <span class="n">br</span><span class="o">-</span><span class="n">tun</span>
+            <span class="n">Interface</span> <span class="n">br</span><span class="o">-</span><span class="n">tun</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+        <span class="n">Port</span> <span class="n">patch</span><span class="o">-</span><span class="nb">int</span>
+            <span class="n">Interface</span> <span class="n">patch</span><span class="o">-</span><span class="nb">int</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">patch</span>
+                <span class="n">options</span><span class="p">:</span> <span class="p">{</span><span class="n">peer</span><span class="o">=</span><span class="n">patch</span><span class="o">-</span><span class="n">tun</span><span class="p">}</span>
+    <span class="n">Bridge</span> <span class="n">br</span><span class="o">-</span><span class="nb">int</span>
+        <span class="n">Controller</span> <span class="s2">&quot;tcp:127.0.0.1:6633&quot;</span>
+            <span class="n">is_connected</span><span class="p">:</span> <span class="n">true</span>
+        <span class="n">fail_mode</span><span class="p">:</span> <span class="n">secure</span>
+        <span class="n">Port</span> <span class="n">br</span><span class="o">-</span><span class="nb">int</span>
+            <span class="n">Interface</span> <span class="n">br</span><span class="o">-</span><span class="nb">int</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+        <span class="n">Port</span> <span class="s2">&quot;qr-e987dcb7-81&quot;</span>
+            <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="n">Interface</span> <span class="s2">&quot;qr-e987dcb7-81&quot;</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+        <span class="n">Port</span> <span class="s2">&quot;tapcb3af139-63&quot;</span>
+            <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="n">Interface</span> <span class="s2">&quot;tapcb3af139-63&quot;</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+        <span class="n">Port</span> <span class="s2">&quot;qr-940f7292-e0&quot;</span>
+            <span class="n">tag</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="n">Interface</span> <span class="s2">&quot;qr-940f7292-e0&quot;</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+        <span class="n">Port</span> <span class="n">patch</span><span class="o">-</span><span class="n">tun</span>
+            <span class="n">Interface</span> <span class="n">patch</span><span class="o">-</span><span class="n">tun</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">patch</span>
+                <span class="n">options</span><span class="p">:</span> <span class="p">{</span><span class="n">peer</span><span class="o">=</span><span class="n">patch</span><span class="o">-</span><span class="nb">int</span><span class="p">}</span>
+    <span class="n">ovs_version</span><span class="p">:</span> <span class="s2">&quot;2.5.0&quot;</span>
+</pre></div>
+</div>
+<p>ดู interface ด้วย ip link:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ip link
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:19:c1:e0 brd ff:ff:ff:ff:ff:ff
+3: virbr0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:e8:8c:c7 brd ff:ff:ff:ff:ff:ff
+4: virbr0-nic: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc fq_codel master virbr0 state DOWN mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:e8:8c:c7 brd ff:ff:ff:ff:ff:ff
+5: ovs-system: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+    link/ether 9e:2f:eb:e4:74:ec brd ff:ff:ff:ff:ff:ff
+10: br-int: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+    link/ether 8a:24:e0:d5:03:42 brd ff:ff:ff:ff:ff:ff
+11: br-ex: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1
+    link/ether fe:8e:5d:8c:1c:40 brd ff:ff:ff:ff:ff:ff
+12: br-tun: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1
+    link/ether ae:0f:68:a5:a6:48 brd ff:ff:ff:ff:ff:ff
 </pre></div>
 </div>
 </div>
