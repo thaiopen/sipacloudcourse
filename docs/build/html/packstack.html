@@ -86,21 +86,13 @@
 <li class="toctree-l1"><a class="reference internal" href="devstack.html">Openstack With DevStack</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Openstack with Packstack</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#packstack">packstack</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#vagrant">vagrant</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#disk-prepare-for-cinder">Disk prepare for cinder</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vagrant">vagrant</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#disk-prepare-for-cinder">Disk prepare for cinder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#install-packstack-2-way">Install Packstack 2 way</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-openstack-puppet-module">Install openstack puppet module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#upload-image">upload image</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#method1">Method1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#method2">Method2</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#edit-packstack-config">Edit Packstack Config</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#install-openstack-puppet-module">Install openstack puppet module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#neutron-network">Neutron Network</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#upload-image">upload image</a></li>
 </ul>
 </li>
 </ul>
@@ -247,9 +239,8 @@ end
 <span class="n">systemctl</span> <span class="ow">is</span><span class="o">-</span><span class="n">active</span> <span class="n">firewalld</span>
 </pre></div>
 </div>
-</div>
 <div class="section" id="disk-prepare-for-cinder">
-<h3>Disk prepare for cinder<a class="headerlink" href="#disk-prepare-for-cinder" title="Permalink to this headline">¶</a></h3>
+<h4>Disk prepare for cinder<a class="headerlink" href="#disk-prepare-for-cinder" title="Permalink to this headline">¶</a></h4>
 <p>เตรียม disk ให้กับ cinder ด้วยการสร้าง volume group ชื่อว่า  cinder-volumes</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
 <span class="n">fdisk</span> <span class="o">-</span><span class="n">l</span>
@@ -265,14 +256,13 @@ end
 <span class="n">vgcreate</span> <span class="n">cinder</span><span class="o">-</span><span class="n">volumes</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vdb</span>
 </pre></div>
 </div>
+</div>
 <div class="section" id="install-packstack-2-way">
 <h4>Install Packstack 2 way<a class="headerlink" href="#install-packstack-2-way" title="Permalink to this headline">¶</a></h4>
 <p>การติดตั้ง Openstack ด้วย packstack เป็นการติดตั้งบน Redhat, CentOS7, Fedora โดยมีเบื้องหลังการ
 ติดตั้งโดยการใช้ puppet module สามารถติดตั้ง packstack ได้ 2 วิธี</p>
-</div>
-</div>
 <div class="section" id="method1">
-<h3>Method1<a class="headerlink" href="#method1" title="Permalink to this headline">¶</a></h3>
+<h5>Method1<a class="headerlink" href="#method1" title="Permalink to this headline">¶</a></h5>
 <p>ติดตั้งผ่าน repository:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
 <span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">openstack</span><span class="o">-</span><span class="n">packstack</span>
@@ -280,7 +270,7 @@ end
 </div>
 </div>
 <div class="section" id="method2">
-<h3>Method2<a class="headerlink" href="#method2" title="Permalink to this headline">¶</a></h3>
+<h5>Method2<a class="headerlink" href="#method2" title="Permalink to this headline">¶</a></h5>
 <p>ติดตั้งผ่าน source code (<a class="reference external" href="https://github.com/openstack/packstack">https://github.com/openstack/packstack</a>):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
 <span class="n">yum</span> <span class="n">install</span> <span class="n">git</span> <span class="o">-</span><span class="n">y</span>
@@ -333,7 +323,7 @@ end
 </pre></div>
 </div>
 <div class="section" id="edit-packstack-config">
-<h4>Edit Packstack Config<a class="headerlink" href="#edit-packstack-config" title="Permalink to this headline">¶</a></h4>
+<h6>Edit Packstack Config<a class="headerlink" href="#edit-packstack-config" title="Permalink to this headline">¶</a></h6>
 <p>ไฟล์ answerfile นี้ สามารถแก้ไข และ run ซ้ำได้ แต่ห้าม generate ใหม่</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="c1">## ตัวอย่างการใช้คำสั่ง  grep เพื่อช่วยค้นหาคำ</span>
 <span class="n">grep</span> <span class="o">-</span><span class="n">n</span> <span class="n">ADMIN_PW</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
@@ -390,8 +380,9 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 </div>
 </div>
 </div>
+</div>
 <div class="section" id="install-openstack-puppet-module">
-<h3>Install openstack puppet module<a class="headerlink" href="#install-openstack-puppet-module" title="Permalink to this headline">¶</a></h3>
+<h4>Install openstack puppet module<a class="headerlink" href="#install-openstack-puppet-module" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">GEM_HOME</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">somedir</span>
 <span class="n">gem</span> <span class="n">install</span> <span class="n">r10k</span>
 <span class="o">...</span>
@@ -494,8 +485,6 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 <img alt="_images/openstack-two-machine-two-nic.png" src="_images/openstack-two-machine-two-nic.png" />
 <p>ผลการ Run</p>
 <img alt="_images/openstack001.png" src="_images/openstack001.png" />
-<div class="section" id="neutron-network">
-<h4>Neutron Network<a class="headerlink" href="#neutron-network" title="Permalink to this headline">¶</a></h4>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth0
@@ -631,9 +620,8 @@ openvswitch:</p>
 </pre></div>
 </div>
 </div>
-</div>
 <div class="section" id="upload-image">
-<h3>upload image<a class="headerlink" href="#upload-image" title="Permalink to this headline">¶</a></h3>
+<h4>upload image<a class="headerlink" href="#upload-image" title="Permalink to this headline">¶</a></h4>
 <p>(packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">keystonerc_admin</span>
 <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">.</span><span class="n">cirros</span><span class="o">-</span><span class="n">cloud</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="mf">0.3</span><span class="o">.</span><span class="mi">4</span><span class="o">/</span><span class="n">cirros</span><span class="o">-</span><span class="mf">0.3</span><span class="o">.</span><span class="mi">4</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">disk</span><span class="o">.</span><span class="n">img</span> <span class="o">|</span> <span class="n">glance</span> \
@@ -664,6 +652,7 @@ openvswitch:</p>
 <p>centos7 image:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">cloud</span><span class="o">.</span><span class="n">centos</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">centos</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mf">1606.</span><span class="n">qcow2</span> <span class="o">|</span> <span class="n">glance</span> <span class="n">image</span><span class="o">-</span><span class="n">create</span> <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;centos7 image&#39;</span> <span class="o">--</span><span class="n">visibility</span><span class="o">=</span><span class="n">public</span> <span class="o">--</span><span class="n">container</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">bare</span> <span class="o">--</span><span class="n">disk</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">qcow2</span>
 </pre></div>
+</div>
 </div>
 </div>
 </div>

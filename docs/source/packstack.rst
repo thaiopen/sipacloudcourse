@@ -1,12 +1,12 @@
 ========================
 Openstack with Packstack
 ========================
-
+*********
 packstack
-=========
+*********
 
 vagrant
--------
+=======
 สร้าง directory ชื่อ openstack และภายในมี Vagrantfile ดังนี้
 
 .. literalinclude::  _source/Vagrantfile3
@@ -48,19 +48,19 @@ Disk prepare for cinder
     vgcreate cinder-volumes /dev/vdb
 
 Install Packstack 2 way
-***********************
+-----------------------
 การติดตั้ง Openstack ด้วย packstack เป็นการติดตั้งบน Redhat, CentOS7, Fedora โดยมีเบื้องหลังการ
 ติดตั้งโดยการใช้ puppet module สามารถติดตั้ง packstack ได้ 2 วิธี
 
 Method1
--------
+^^^^^^^
 ติดตั้งผ่าน repository::
 
     sudo su -
     yum install -y openstack-packstack
 
 Method2
--------
+^^^^^^^
 ติดตั้งผ่าน source code (https://github.com/openstack/packstack)::
 
     sudo su -
