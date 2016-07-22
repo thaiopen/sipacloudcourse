@@ -431,35 +431,42 @@ openvswitch::
 
 Task 1 upload image
 ===================
+* Log in ด้วย keystonerc_admin
+* Download image cirros image และ centos 7
 (packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)
 ::
 
+  cd ~
   source keystonerc_admin
-  curl http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img | glance \
-         image-create --name='cirros image' --visibility=public --container-format=bare --disk-format=qcow2
+  ## prompt change ##
+  (keystone_admin)#
 
-	+------------------+--------------------------------------+
-	| Property         | Value                                |
-	+------------------+--------------------------------------+
-	| checksum         | ee1eca47dc88f4879d8a229cc70a07c6     |
-	| container_format | bare                                 |
-	| created_at       | 2016-07-06T06:30:13Z                 |
-	| disk_format      | qcow2                                |
-	| id               | 52835f4d-90fc-4dfd-85bd-d56a4c886ed7 |
-	| min_disk         | 0                                    |
-	| min_ram          | 0                                    |
-	| name             | cirros image                         |
-	| owner            | 4b2f4b8359614a2d930802d428cef551     |
-	| protected        | False                                |
-	| size             | 13287936                             |
-	| status           | active                               |
-	| tags             | []                                   |
-	| updated_at       | 2016-07-06T06:30:42Z                 |
-	| virtual_size     | None                                 |
-	| visibility       | public                               |
-	+------------------+--------------------------------------+
+  ## download
+  curl -O http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+  glance image-create --name='cirros image' --visibility=public --container-format=bare --disk-format=qcow2 --file cirros-0.3.4-x86_64-disk.img
+
+  +------------------+--------------------------------------+
+  | Property         | Value                                |
+  +------------------+--------------------------------------+
+  | checksum         | ee1eca47dc88f4879d8a229cc70a07c6     |
+  | container_format | bare                                 |
+  | created_at       | 2016-07-22T14:56:49Z                 |
+  | disk_format      | qcow2                                |
+  | id               | 73c8577f-767c-497f-88fd-3e77ead3bae9 |
+  | min_disk         | 0                                    |
+  | min_ram          | 0                                    |
+  | name             | cirros image                         |
+  | owner            | cb1d456312e240a4af43dabe7c9927c9     |
+  | protected        | False                                |
+  | size             | 13287936                             |
+  | status           | active                               |
+  | tags             | []                                   |
+  | updated_at       | 2016-07-22T14:56:49Z                 |
+  | virtual_size     | None                                 |
+  | visibility       | public                               |
+  +------------------+--------------------------------------+
 
 
-centos7 image::
+ทดสอบอีกครั้งแต่คราวนี้ download centos7 image และใช้คำสั่ง ต่อเนื่องกัน ระหว่าง curl | glance::
 
 	curl http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2 | glance image-create --name='centos7 image' --visibility=public --container-format=bare --disk-format=qcow2
