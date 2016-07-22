@@ -335,24 +335,27 @@ Method1
 <div class="section" id="edit-packstack-config">
 <h4>Edit Packstack Config<a class="headerlink" href="#edit-packstack-config" title="Permalink to this headline">¶</a></h4>
 <p>ไฟล์ answerfile นี้ สามารถแก้ไข และ run ซ้ำได้ แต่ห้าม generate ใหม่</p>
-<blockquote>
-<div><blockquote>
-<div>## ตัวอย่าง</div></blockquote>
-<p>grep -n ADMIN_PW  answerfile001.txt
-vim  answerfile001.txt +(line no)</p>
-<p>CONFIG_KEYSTONE_ADMIN_PW=password
-CONFIG_LBAAS_INSTALL=y
-CONFIG_NEUTRON_METERING_AGENT_INSTALL=y
-CONFIG_NEUTRON_FWAAS=y</p>
-<p>CONFIG_NEUTRON_ML2_TYPE_DRIVERS=vlan
-CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES=vlan
-CONFIG_NEUTRON_ML2_VLAN_RANGES=physnet2:1:1000</p>
-<p>CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet2:br-eth2
-CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:eth0,br-eth2:eth2</p>
-<p>CONFIG_HEAT_CFN_INSTALL=y
-CONFIG_HORIZON_SSL=y
-CONFIG_PROVISION_DEMO=n</p>
-</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="c1">## ตัวอย่าง</span>
+<span class="n">grep</span> <span class="o">-</span><span class="n">n</span> <span class="n">ADMIN_PW</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">vim</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span> <span class="o">+</span><span class="p">(</span><span class="n">line</span> <span class="n">no</span><span class="p">)</span>
+
+<span class="n">CONFIG_KEYSTONE_ADMIN_PW</span><span class="o">=</span><span class="n">password</span>
+<span class="n">CONFIG_LBAAS_INSTALL</span><span class="o">=</span><span class="n">y</span>
+<span class="n">CONFIG_NEUTRON_METERING_AGENT_INSTALL</span><span class="o">=</span><span class="n">y</span>
+<span class="n">CONFIG_NEUTRON_FWAAS</span><span class="o">=</span><span class="n">y</span>
+
+<span class="n">CONFIG_NEUTRON_ML2_TYPE_DRIVERS</span><span class="o">=</span><span class="n">vlan</span>
+<span class="n">CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES</span><span class="o">=</span><span class="n">vlan</span>
+<span class="n">CONFIG_NEUTRON_ML2_VLAN_RANGES</span><span class="o">=</span><span class="n">physnet2</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">1000</span>
+
+<span class="n">CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS</span><span class="o">=</span><span class="n">physnet2</span><span class="p">:</span><span class="n">br</span><span class="o">-</span><span class="n">eth2</span>
+<span class="n">CONFIG_NEUTRON_OVS_BRIDGE_IFACES</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span><span class="p">:</span><span class="n">eth0</span><span class="p">,</span><span class="n">br</span><span class="o">-</span><span class="n">eth2</span><span class="p">:</span><span class="n">eth2</span>
+
+<span class="n">CONFIG_HEAT_CFN_INSTALL</span><span class="o">=</span><span class="n">y</span>
+<span class="n">CONFIG_HORIZON_SSL</span><span class="o">=</span><span class="n">y</span>
+<span class="n">CONFIG_PROVISION_DEMO</span><span class="o">=</span><span class="n">n</span>
+</pre></div>
+</div>
 <p>การแก้ไขค่าจะใช้ crudini เป็นตัวช่วย:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>answerfile=answer-Jul-21-16.txt
 crudini --set $answerfile general CONFIG_KEYSTONE_ADMIN_PW password
@@ -381,14 +384,13 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 </div>
 <div class="section" id="install-openstack-puppet-module">
 <h3>Install openstack puppet module<a class="headerlink" href="#install-openstack-puppet-module" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>::</dt>
-<dd>export GEM_HOME=/tmp/somedir
-gem install r10k
-## go to packstacksource
-cd ~/packstack
-/tmp/somedir/bin/r10k puppetfile install -v</dd>
-</dl>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">GEM_HOME</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">somedir</span>
+<span class="n">gem</span> <span class="n">install</span> <span class="n">r10k</span>
+<span class="c1">## go to packstacksource</span>
+<span class="n">cd</span> <span class="o">~/</span><span class="n">packstack</span>
+<span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">somedir</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">r10k</span> <span class="n">puppetfile</span> <span class="n">install</span> <span class="o">-</span><span class="n">v</span>
+</pre></div>
+</div>
 <p>จะเป็นการติดตั้ง puppet module</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">aodh</span>
 <span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">ceilometer</span>
@@ -430,9 +432,10 @@ cd ~/packstack
 <span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">xinetd</span>
 </pre></div>
 </div>
-<p>copy module</p>
-<blockquote>
-<div>cp -r packstack/puppet/modules/packstack /usr/share/openstack-puppet/modules</div></blockquote>
+<p>copy module:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="o">-</span><span class="n">r</span> <span class="n">packstack</span><span class="o">/</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">packstack</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span>
+</pre></div>
+</div>
 <p>Run</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pki</span><span class="o">/</span><span class="n">tls</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span>
 <span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">sha256</span> <span class="o">-</span><span class="n">newkey</span> <span class="n">rsa</span><span class="p">:</span><span class="mi">2048</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">certificate</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">out</span> <span class="n">selfcert</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">days</span> <span class="mi">1024</span> <span class="o">-</span><span class="n">nodes</span>
@@ -547,7 +550,7 @@ cd ~/packstack
 <div class="section" id="upload-image">
 <h3>upload image<a class="headerlink" href="#upload-image" title="Permalink to this headline">¶</a></h3>
 <p>(packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="n">source</span> <span class="n">keystonerc_admin</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">keystonerc_admin</span>
 <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">.</span><span class="n">cirros</span><span class="o">-</span><span class="n">cloud</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="mf">0.3</span><span class="o">.</span><span class="mi">4</span><span class="o">/</span><span class="n">cirros</span><span class="o">-</span><span class="mf">0.3</span><span class="o">.</span><span class="mi">4</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">disk</span><span class="o">.</span><span class="n">img</span> <span class="o">|</span> <span class="n">glance</span> \
        <span class="n">image</span><span class="o">-</span><span class="n">create</span> <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;cirros image&#39;</span> <span class="o">--</span><span class="n">visibility</span><span class="o">=</span><span class="n">public</span> <span class="o">--</span><span class="n">container</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">bare</span> <span class="o">--</span><span class="n">disk</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">qcow2</span>
 
