@@ -349,6 +349,8 @@ br-ex <--> eth0
   ONBOOT=yes
   BOOTPROTO=none
 
+Openvswitch Interface
+---------------------
 ตรวจสอบ interface ด้วยคำสั่ง ``ip link`` จะสังเกตุเห็น interface ที่ 5,7,9,11,11 เป็น ของ
 openvswitch::
 
@@ -426,8 +428,9 @@ openvswitch::
                   type: internal
       ovs_version: "2.5.0"
 
-upload image
-------------
+
+Task 1 upload image
+===================
 (packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)
 ::
 

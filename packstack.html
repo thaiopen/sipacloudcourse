@@ -95,9 +95,10 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#neutron-network">Neutron Network</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#bridge-physical-interface-and-bridge">Bridge physical interface and bridge</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#upload-image">upload image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#openvswitch-interface">Openvswitch Interface</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#task-1-upload-image">Task 1 upload image</a></li>
 </ul>
 </li>
 </ul>
@@ -553,6 +554,9 @@ br-ex &lt;&#8211;&gt; eth0</p>
 <span class="n">BOOTPROTO</span><span class="o">=</span><span class="n">none</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="openvswitch-interface">
+<h4>Openvswitch Interface<a class="headerlink" href="#openvswitch-interface" title="Permalink to this headline">¶</a></h4>
 <p>ตรวจสอบ interface ด้วยคำสั่ง <code class="docutils literal"><span class="pre">ip</span> <span class="pre">link</span></code> จะสังเกตุเห็น interface ที่ 5,7,9,11,11 เป็น ของ
 openvswitch:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ip</span> <span class="n">link</span>
@@ -631,8 +635,9 @@ openvswitch:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="upload-image">
-<h4>upload image<a class="headerlink" href="#upload-image" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="task-1-upload-image">
+<h3>Task 1 upload image<a class="headerlink" href="#task-1-upload-image" title="Permalink to this headline">¶</a></h3>
 <p>(packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">keystonerc_admin</span>
 <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">.</span><span class="n">cirros</span><span class="o">-</span><span class="n">cloud</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="mf">0.3</span><span class="o">.</span><span class="mi">4</span><span class="o">/</span><span class="n">cirros</span><span class="o">-</span><span class="mf">0.3</span><span class="o">.</span><span class="mi">4</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">disk</span><span class="o">.</span><span class="n">img</span> <span class="o">|</span> <span class="n">glance</span> \
@@ -663,7 +668,6 @@ openvswitch:</p>
 <p>centos7 image:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">cloud</span><span class="o">.</span><span class="n">centos</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">centos</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mf">1606.</span><span class="n">qcow2</span> <span class="o">|</span> <span class="n">glance</span> <span class="n">image</span><span class="o">-</span><span class="n">create</span> <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;centos7 image&#39;</span> <span class="o">--</span><span class="n">visibility</span><span class="o">=</span><span class="n">public</span> <span class="o">--</span><span class="n">container</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">bare</span> <span class="o">--</span><span class="n">disk</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">qcow2</span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>
