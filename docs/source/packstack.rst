@@ -282,86 +282,146 @@ Run
 .. image:: _images/openstack001.png
 
 
-Network Management
-------------------
+Neutron Network
+***************
 .. note::
-  เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth1
-  เป็น management network และ external network รวมกัน
+  เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth0
+  external network และ eth1 เป็น manament network ส่วน eth2 จะทำหน้าที่เป็น data-network
 
-packstack จะทำหน้าที่สร้าง ระบบโครงสร้าง virtual network (ovs-system)ให้ ได้แก่ bridge ชื่อ
-ิbr-ex, br-int, br-tun และ เราจะต้องเชื่อมต่อ bridge นี้กับ interface จริง (physical interface)
+Openvswith จะทำหน้าที่สร้าง ระบบโครงสร้าง virtual network (ovs-system)ให้ ได้แก่ bridge ชื่อ
+ิbr-ex, br-int, br-tun และ เราจะต้องเชื่อมต่อ bridge นี้กับ interface จริง ดังรูป
+
+
 ::
 
-  # openvswitch command
+์Network Configuration ใน ``/etc/sysconfig/network-scripts/`` จะแสดงการเชื่อมต่อระหว่าง
+br-ex <--> eth0
+::
+
+  cat ifcfg-br-ex
+  ##
+  ONBOOT="yes"
+  PERSISTENT_DHCLIENT="yes"
+  DEVICE=br-ex
+  NAME=br-ex
+  DEVICETYPE=ovs
+  OVSBOOTPROTO="dhcp"
+  TYPE=OVSBridge
+  OVSDHCPINTERFACES=eth0
+  OVS_EXTRA="set bridge br-ex other-config:hwaddr=52:54:00:ee:fe:49"
+
+  cat ifcfg-eth0
+  ##
+  DEVICE=eth0
+  NAME=eth0
+  DEVICETYPE=ovs
+  TYPE=OVSPort
+  OVS_BRIDGE=br-ex
+  ONBOOT=yes
+  BOOTPROTO=none
+
+และ br-eth2 <--> eth2
+::
+
+  cat ifcfg-br-eth2
+  ##
+  NM_CONTROLLED=no
+  ONBOOT=yes
+  IPADDR=20.0.0.10
+  NETMASK=255.255.255.0
+  PEERDNS=no
+  DEVICE=br-eth2
+  NAME=br-eth2
+  DEVICETYPE=ovs
+  OVSBOOTPROTO=none
+  TYPE=OVSBridge
+
+  cat ifcfg-eth2
+  ##
+  DEVICE=eth2
+  NAME=eth2
+  DEVICETYPE=ovs
+  TYPE=OVSPort
+  OVS_BRIDGE=br-eth2
+  ONBOOT=yes
+  BOOTPROTO=none
+
+ตรวจสอบ interface ด้วยคำสั่ง ``ip link`` จะสังเกตุเห็น interface ที่ 5,7,9,11,11 เป็น ของ
+openvswitch::
+
+  ip link
+  ##
+  1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT
+      link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+  2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master ovs-system state UP mode DEFAULT qlen 1000
+      link/ether 52:54:00:ee:fe:49 brd ff:ff:ff:ff:ff:ff
+  3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT qlen 1000
+      link/ether 52:54:00:7c:45:f8 brd ff:ff:ff:ff:ff:ff
+  4: eth2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master ovs-system state UP mode DEFAULT qlen 1000
+      link/ether 52:54:00:58:81:34 brd ff:ff:ff:ff:ff:ff
+  5: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
+      link/ether fa:c8:7d:8b:61:be brd ff:ff:ff:ff:ff:ff
+  7: br-ex: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT
+      link/ether 52:54:00:ee:fe:49 brd ff:ff:ff:ff:ff:ff
+  9: br-eth2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT
+      link/ether 3a:95:42:99:3c:4d brd ff:ff:ff:ff:ff:ff
+  10: br-int: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
+      link/ether f2:75:a8:13:61:41 brd ff:ff:ff:ff:ff:ff
+  11: br-tun: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
+      link/ether 8e:3e:d4:03:64:4e brd ff:ff:ff:ff:ff:ff
+
+ตรวจสอบด้วยคำสั่ง ``ovs-vsctl show``::
+
   ovs-vsctl show
-
-backup::
-
-	cp /etc/sysconfig/network-scripts/ifcfg-eth1  /root
-	cp /etc/sysconfig/network-scripts/ifcfg-eth1  /etc/sysconfig/network-scripts/ifcfg-br-ex
-	cd /etc/sysconfig/network-scripts/
-
-edit ค่าของ interface eth1::
-
-  vi ifcfg-eth1
-
-	ONBOOT=yes
-	DEVICE=eth1
-	HWADDR=52:54:00:95:c4:b4
-	TYPE=OVSPort
-	DEVICETYPE=ovs
-	OVS_BRIDGE=br-ex
-
-	vi ifcfg-br-ex
-
-	DEVICE=br-ex
-	BOOTPROTO=static
-	ONBOOT=yes
-	TYPE=OVSBridge
-	DEVICETYPE=ovs
-	USERCTL=yes
-	PEERDNS=yes
-	IPV6INIT=no
-	IPADDR=10.0.0.10
-	NETMASK=255.255.255.0
-	GATEWAY=192.168.121.1
-	DNS1=8.8.8.8
-
-restart::
-
-	systemctl restart network
-	ovs-vsctl show
-	(show result  br-ex <--> eth1
-	4b34f849-95d8-4651-bbae-40e05d088012
-		Bridge br-ex
-		    Port "eth1"
-		        Interface "eth1"
-		    Port br-ex
-		        Interface br-ex
-		            type: internal
-
-
-	ip a s eth1
-	(eth1 no ip)
-	3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master ovs-system state UP qlen 1000
-		link/ether 52:54:00:95:c4:b4 brd ff:ff:ff:ff:ff:ff
-		inet6 fe80::5054:ff:fe95:c4b4/64 scope link
-		   valid_lft forever preferred_lft forever
-
-	ip a s br-ex
-	(br-ex have ip)
-	12: br-ex: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN
-		link/ether ce:d5:be:2d:03:40 brd ff:ff:ff:ff:ff:ff
-		inet 10.0.0.10/24 brd 10.0.0.255 scope global br-ex
-		   valid_lft forever preferred_lft forever
-		inet6 fe80::ccd5:beff:fe2d:340/64 scope link
-		   valid_lft forever preferred_lft forever
-
-sethostname::
-
-	hostnamectl set-hostname controller.example.com
-
-
+  ##
+  43a1c7ac-2a16-43c2-88d3-423334b04eea
+      Bridge br-tun
+          fail_mode: secure
+          Port patch-int
+              Interface patch-int
+                  type: patch
+                  options: {peer=patch-tun}
+          Port br-tun
+              Interface br-tun
+                  type: internal
+      Bridge br-ex
+          Port br-ex
+              Interface br-ex
+                  type: internal
+          Port "eth0"
+              Interface "eth0"
+          Port phy-br-ex
+              Interface phy-br-ex
+                  type: patch
+                  options: {peer=int-br-ex}
+      Bridge br-int
+          fail_mode: secure
+          Port patch-tun
+              Interface patch-tun
+                  type: patch
+                  options: {peer=patch-int}
+          Port int-br-ex
+              Interface int-br-ex
+                  type: patch
+                  options: {peer=phy-br-ex}
+          Port br-int
+              Interface br-int
+                  type: internal
+          Port "int-br-eth2"
+              Interface "int-br-eth2"
+                  type: patch
+                  options: {peer="phy-br-eth2"}
+      Bridge "br-eth2"
+          Port "phy-br-eth2"
+              Interface "phy-br-eth2"
+                  type: patch
+                  options: {peer="int-br-eth2"}
+          Port "eth2"
+              Interface "eth2"
+          Port "br-eth2"
+              Interface "br-eth2"
+                  type: internal
+      ovs_version: "2.5.0"
 
 upload image
 ------------
