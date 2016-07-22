@@ -199,6 +199,9 @@ Compute Menu
   Ctrl a d
   ./unstack.sh
 
+Neutron Network Default Settings
+********************************
+
 ค่า default ของ network ที่สร้างหลังจาก ที่ enable neutron โดยมี openswitch เป็นคนสร้างให้ เป็นค่า
 default เนื่องจากเราไม่ได้ปรับแต่ค่าตัวแปรใดๆใน local.conf ให้พิมพ์คำสั่ง openvswitch ``ovs-vsctl show``::
 
