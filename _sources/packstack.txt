@@ -249,7 +249,7 @@ Run
 
     mv selfkey.key /etc/pki/tls/private/selfkey.key
     mkdir -p ~/packstackca/certs/
-    cp ssl_vnc.crt  ~/packstackca/certs/10.0.0.10ssl_vnc.crt
+    
 
 
     packstack --answer-file answer-Jul-21-16.txt
