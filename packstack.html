@@ -96,8 +96,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#edit-packstack-config">Edit Packstack Config</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#install-openstack-puppet-module">Install openstack puppet module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#network-management">Network Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-openstack-puppet-module">Install openstack puppet module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#neutron-network">Neutron Network</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#upload-image">upload image</a></li>
 </ul>
 </li>
@@ -492,85 +494,142 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 <img alt="_images/openstack-two-machine-two-nic.png" src="_images/openstack-two-machine-two-nic.png" />
 <p>ผลการ Run</p>
 <img alt="_images/openstack001.png" src="_images/openstack001.png" />
-</div>
-<div class="section" id="network-management">
-<h3>Network Management<a class="headerlink" href="#network-management" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="neutron-network">
+<h4>Neutron Network<a class="headerlink" href="#neutron-network" title="Permalink to this headline">¶</a></h4>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth1
-เป็น management network และ external network รวมกัน</p>
+<p class="last">เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth0
+external network และ eth1 เป็น manament network ส่วน eth2 จะทำหน้าที่เป็น data-network</p>
 </div>
-<p>packstack จะทำหน้าที่สร้าง ระบบโครงสร้าง virtual network (ovs-system)ให้ ได้แก่ bridge ชื่อ
-ิbr-ex, br-int, br-tun และ เราจะต้องเชื่อมต่อ bridge นี้กับ interface จริง (physical interface)</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># openvswitch command</span>
-<span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="n">show</span>
+<p>Openvswith จะทำหน้าที่สร้าง ระบบโครงสร้าง virtual network (ovs-system)ให้ ได้แก่ bridge ชื่อ
+ิbr-ex, br-int, br-tun และ เราจะต้องเชื่อมต่อ bridge นี้กับ interface จริง ดังรูป</p>
+<p>์Network Configuration ใน <code class="docutils literal"><span class="pre">/etc/sysconfig/network-scripts/</span></code> จะแสดงการเชื่อมต่อระหว่าง
+br-ex &lt;&#8211;&gt; eth0</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+<span class="c1">##</span>
+<span class="n">ONBOOT</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span>
+<span class="n">PERSISTENT_DHCLIENT</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span>
+<span class="n">DEVICE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+<span class="n">NAME</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+<span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
+<span class="n">OVSBOOTPROTO</span><span class="o">=</span><span class="s2">&quot;dhcp&quot;</span>
+<span class="n">TYPE</span><span class="o">=</span><span class="n">OVSBridge</span>
+<span class="n">OVSDHCPINTERFACES</span><span class="o">=</span><span class="n">eth0</span>
+<span class="n">OVS_EXTRA</span><span class="o">=</span><span class="s2">&quot;set bridge br-ex other-config:hwaddr=52:54:00:ee:fe:49&quot;</span>
+
+<span class="n">cat</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">eth0</span>
+<span class="c1">##</span>
+<span class="n">DEVICE</span><span class="o">=</span><span class="n">eth0</span>
+<span class="n">NAME</span><span class="o">=</span><span class="n">eth0</span>
+<span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
+<span class="n">TYPE</span><span class="o">=</span><span class="n">OVSPort</span>
+<span class="n">OVS_BRIDGE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+<span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
+<span class="n">BOOTPROTO</span><span class="o">=</span><span class="n">none</span>
 </pre></div>
 </div>
-<p>backup:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span><span class="n">ifcfg</span><span class="o">-</span><span class="n">eth1</span>  <span class="o">/</span><span class="n">root</span>
-<span class="n">cp</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span><span class="n">ifcfg</span><span class="o">-</span><span class="n">eth1</span>  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span><span class="n">ifcfg</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-<span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="o">-</span><span class="n">scripts</span><span class="o">/</span>
+<p>และ br-eth2 &lt;&#8211;&gt; eth2</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">eth2</span>
+<span class="c1">##</span>
+<span class="n">NM_CONTROLLED</span><span class="o">=</span><span class="n">no</span>
+<span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
+<span class="n">IPADDR</span><span class="o">=</span><span class="mf">20.0</span><span class="o">.</span><span class="mf">0.10</span>
+<span class="n">NETMASK</span><span class="o">=</span><span class="mf">255.255</span><span class="o">.</span><span class="mf">255.0</span>
+<span class="n">PEERDNS</span><span class="o">=</span><span class="n">no</span>
+<span class="n">DEVICE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">eth2</span>
+<span class="n">NAME</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">eth2</span>
+<span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
+<span class="n">OVSBOOTPROTO</span><span class="o">=</span><span class="n">none</span>
+<span class="n">TYPE</span><span class="o">=</span><span class="n">OVSBridge</span>
+
+<span class="n">cat</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">eth2</span>
+<span class="c1">##</span>
+<span class="n">DEVICE</span><span class="o">=</span><span class="n">eth2</span>
+<span class="n">NAME</span><span class="o">=</span><span class="n">eth2</span>
+<span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
+<span class="n">TYPE</span><span class="o">=</span><span class="n">OVSPort</span>
+<span class="n">OVS_BRIDGE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">eth2</span>
+<span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
+<span class="n">BOOTPROTO</span><span class="o">=</span><span class="n">none</span>
 </pre></div>
 </div>
-<p>edit ค่าของ interface eth1:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vi</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">eth1</span>
-
-      <span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
-      <span class="n">DEVICE</span><span class="o">=</span><span class="n">eth1</span>
-      <span class="n">HWADDR</span><span class="o">=</span><span class="mi">52</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">95</span><span class="p">:</span><span class="n">c4</span><span class="p">:</span><span class="n">b4</span>
-      <span class="n">TYPE</span><span class="o">=</span><span class="n">OVSPort</span>
-      <span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
-      <span class="n">OVS_BRIDGE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-
-      <span class="n">vi</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-
-      <span class="n">DEVICE</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-      <span class="n">BOOTPROTO</span><span class="o">=</span><span class="n">static</span>
-      <span class="n">ONBOOT</span><span class="o">=</span><span class="n">yes</span>
-      <span class="n">TYPE</span><span class="o">=</span><span class="n">OVSBridge</span>
-      <span class="n">DEVICETYPE</span><span class="o">=</span><span class="n">ovs</span>
-      <span class="n">USERCTL</span><span class="o">=</span><span class="n">yes</span>
-      <span class="n">PEERDNS</span><span class="o">=</span><span class="n">yes</span>
-      <span class="n">IPV6INIT</span><span class="o">=</span><span class="n">no</span>
-      <span class="n">IPADDR</span><span class="o">=</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span>
-      <span class="n">NETMASK</span><span class="o">=</span><span class="mf">255.255</span><span class="o">.</span><span class="mf">255.0</span>
-      <span class="n">GATEWAY</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.1</span>
-      <span class="n">DNS1</span><span class="o">=</span><span class="mf">8.8</span><span class="o">.</span><span class="mf">8.8</span>
+<p>ตรวจสอบ interface ด้วยคำสั่ง <code class="docutils literal"><span class="pre">ip</span> <span class="pre">link</span></code> จะสังเกตุเห็น interface ที่ 5,7,9,11,11 เป็น ของ
+openvswitch:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ip</span> <span class="n">link</span>
+<span class="c1">##</span>
+<span class="mi">1</span><span class="p">:</span> <span class="n">lo</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">LOOPBACK</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">65536</span> <span class="n">qdisc</span> <span class="n">noqueue</span> <span class="n">state</span> <span class="n">UNKNOWN</span> <span class="n">mode</span> <span class="n">DEFAULT</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">loopback</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">brd</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+<span class="mi">2</span><span class="p">:</span> <span class="n">eth0</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">pfifo_fast</span> <span class="n">master</span> <span class="n">ovs</span><span class="o">-</span><span class="n">system</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">mode</span> <span class="n">DEFAULT</span> <span class="n">qlen</span> <span class="mi">1000</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">52</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="n">ee</span><span class="p">:</span><span class="n">fe</span><span class="p">:</span><span class="mi">49</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
+<span class="mi">3</span><span class="p">:</span> <span class="n">eth1</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">pfifo_fast</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">mode</span> <span class="n">DEFAULT</span> <span class="n">qlen</span> <span class="mi">1000</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">52</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">7</span><span class="n">c</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="n">f8</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
+<span class="mi">4</span><span class="p">:</span> <span class="n">eth2</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">pfifo_fast</span> <span class="n">master</span> <span class="n">ovs</span><span class="o">-</span><span class="n">system</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">mode</span> <span class="n">DEFAULT</span> <span class="n">qlen</span> <span class="mi">1000</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">52</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">58</span><span class="p">:</span><span class="mi">81</span><span class="p">:</span><span class="mi">34</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
+<span class="mi">5</span><span class="p">:</span> <span class="n">ovs</span><span class="o">-</span><span class="n">system</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noop</span> <span class="n">state</span> <span class="n">DOWN</span> <span class="n">mode</span> <span class="n">DEFAULT</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="n">fa</span><span class="p">:</span><span class="n">c8</span><span class="p">:</span><span class="mi">7</span><span class="n">d</span><span class="p">:</span><span class="mi">8</span><span class="n">b</span><span class="p">:</span><span class="mi">61</span><span class="p">:</span><span class="n">be</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
+<span class="mi">7</span><span class="p">:</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noqueue</span> <span class="n">state</span> <span class="n">UNKNOWN</span> <span class="n">mode</span> <span class="n">DEFAULT</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">52</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="n">ee</span><span class="p">:</span><span class="n">fe</span><span class="p">:</span><span class="mi">49</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
+<span class="mi">9</span><span class="p">:</span> <span class="n">br</span><span class="o">-</span><span class="n">eth2</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noqueue</span> <span class="n">state</span> <span class="n">UNKNOWN</span> <span class="n">mode</span> <span class="n">DEFAULT</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">3</span><span class="n">a</span><span class="p">:</span><span class="mi">95</span><span class="p">:</span><span class="mi">42</span><span class="p">:</span><span class="mi">99</span><span class="p">:</span><span class="mi">3</span><span class="n">c</span><span class="p">:</span><span class="mi">4</span><span class="n">d</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
+<span class="mi">10</span><span class="p">:</span> <span class="n">br</span><span class="o">-</span><span class="nb">int</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noop</span> <span class="n">state</span> <span class="n">DOWN</span> <span class="n">mode</span> <span class="n">DEFAULT</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="n">f2</span><span class="p">:</span><span class="mi">75</span><span class="p">:</span><span class="n">a8</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mi">61</span><span class="p">:</span><span class="mi">41</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
+<span class="mi">11</span><span class="p">:</span> <span class="n">br</span><span class="o">-</span><span class="n">tun</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noop</span> <span class="n">state</span> <span class="n">DOWN</span> <span class="n">mode</span> <span class="n">DEFAULT</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">8</span><span class="n">e</span><span class="p">:</span><span class="mi">3</span><span class="n">e</span><span class="p">:</span><span class="n">d4</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">64</span><span class="p">:</span><span class="mi">4</span><span class="n">e</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
 </pre></div>
 </div>
-<p>restart:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="n">restart</span> <span class="n">network</span>
-<span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="n">show</span>
-<span class="p">(</span><span class="n">show</span> <span class="n">result</span>  <span class="n">br</span><span class="o">-</span><span class="n">ex</span> <span class="o">&lt;--&gt;</span> <span class="n">eth1</span>
-<span class="mi">4</span><span class="n">b34f849</span><span class="o">-</span><span class="mi">95</span><span class="n">d8</span><span class="o">-</span><span class="mi">4651</span><span class="o">-</span><span class="n">bbae</span><span class="o">-</span><span class="mi">40</span><span class="n">e05d088012</span>
-        <span class="n">Bridge</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-            <span class="n">Port</span> <span class="s2">&quot;eth1&quot;</span>
-                <span class="n">Interface</span> <span class="s2">&quot;eth1&quot;</span>
-            <span class="n">Port</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-                <span class="n">Interface</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-                    <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
-
-
-<span class="n">ip</span> <span class="n">a</span> <span class="n">s</span> <span class="n">eth1</span>
-<span class="p">(</span><span class="n">eth1</span> <span class="n">no</span> <span class="n">ip</span><span class="p">)</span>
-<span class="mi">3</span><span class="p">:</span> <span class="n">eth1</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">pfifo_fast</span> <span class="n">master</span> <span class="n">ovs</span><span class="o">-</span><span class="n">system</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">qlen</span> <span class="mi">1000</span>
-        <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">52</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">95</span><span class="p">:</span><span class="n">c4</span><span class="p">:</span><span class="n">b4</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
-        <span class="n">inet6</span> <span class="n">fe80</span><span class="p">::</span><span class="mi">5054</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">fe95</span><span class="p">:</span><span class="n">c4b4</span><span class="o">/</span><span class="mi">64</span> <span class="n">scope</span> <span class="n">link</span>
-           <span class="n">valid_lft</span> <span class="n">forever</span> <span class="n">preferred_lft</span> <span class="n">forever</span>
-
-<span class="n">ip</span> <span class="n">a</span> <span class="n">s</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-<span class="p">(</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span> <span class="n">have</span> <span class="n">ip</span><span class="p">)</span>
-<span class="mi">12</span><span class="p">:</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noqueue</span> <span class="n">state</span> <span class="n">UNKNOWN</span>
-        <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="n">ce</span><span class="p">:</span><span class="n">d5</span><span class="p">:</span><span class="n">be</span><span class="p">:</span><span class="mi">2</span><span class="n">d</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">40</span> <span class="n">brd</span> <span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span><span class="p">:</span><span class="n">ff</span>
-        <span class="n">inet</span> <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="o">/</span><span class="mi">24</span> <span class="n">brd</span> <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.255</span> <span class="n">scope</span> <span class="k">global</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
-           <span class="n">valid_lft</span> <span class="n">forever</span> <span class="n">preferred_lft</span> <span class="n">forever</span>
-        <span class="n">inet6</span> <span class="n">fe80</span><span class="p">::</span><span class="n">ccd5</span><span class="p">:</span><span class="n">beff</span><span class="p">:</span><span class="n">fe2d</span><span class="p">:</span><span class="mi">340</span><span class="o">/</span><span class="mi">64</span> <span class="n">scope</span> <span class="n">link</span>
-           <span class="n">valid_lft</span> <span class="n">forever</span> <span class="n">preferred_lft</span> <span class="n">forever</span>
+<p>ตรวจสอบด้วยคำสั่ง <code class="docutils literal"><span class="pre">ovs-vsctl</span> <span class="pre">show</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="n">show</span>
+<span class="c1">##</span>
+<span class="mi">43</span><span class="n">a1c7ac</span><span class="o">-</span><span class="mi">2</span><span class="n">a16</span><span class="o">-</span><span class="mi">43</span><span class="n">c2</span><span class="o">-</span><span class="mi">88</span><span class="n">d3</span><span class="o">-</span><span class="mi">423334</span><span class="n">b04eea</span>
+    <span class="n">Bridge</span> <span class="n">br</span><span class="o">-</span><span class="n">tun</span>
+        <span class="n">fail_mode</span><span class="p">:</span> <span class="n">secure</span>
+        <span class="n">Port</span> <span class="n">patch</span><span class="o">-</span><span class="nb">int</span>
+            <span class="n">Interface</span> <span class="n">patch</span><span class="o">-</span><span class="nb">int</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">patch</span>
+                <span class="n">options</span><span class="p">:</span> <span class="p">{</span><span class="n">peer</span><span class="o">=</span><span class="n">patch</span><span class="o">-</span><span class="n">tun</span><span class="p">}</span>
+        <span class="n">Port</span> <span class="n">br</span><span class="o">-</span><span class="n">tun</span>
+            <span class="n">Interface</span> <span class="n">br</span><span class="o">-</span><span class="n">tun</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+    <span class="n">Bridge</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+        <span class="n">Port</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+            <span class="n">Interface</span> <span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+        <span class="n">Port</span> <span class="s2">&quot;eth0&quot;</span>
+            <span class="n">Interface</span> <span class="s2">&quot;eth0&quot;</span>
+        <span class="n">Port</span> <span class="n">phy</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+            <span class="n">Interface</span> <span class="n">phy</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">patch</span>
+                <span class="n">options</span><span class="p">:</span> <span class="p">{</span><span class="n">peer</span><span class="o">=</span><span class="nb">int</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span><span class="p">}</span>
+    <span class="n">Bridge</span> <span class="n">br</span><span class="o">-</span><span class="nb">int</span>
+        <span class="n">fail_mode</span><span class="p">:</span> <span class="n">secure</span>
+        <span class="n">Port</span> <span class="n">patch</span><span class="o">-</span><span class="n">tun</span>
+            <span class="n">Interface</span> <span class="n">patch</span><span class="o">-</span><span class="n">tun</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">patch</span>
+                <span class="n">options</span><span class="p">:</span> <span class="p">{</span><span class="n">peer</span><span class="o">=</span><span class="n">patch</span><span class="o">-</span><span class="nb">int</span><span class="p">}</span>
+        <span class="n">Port</span> <span class="nb">int</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+            <span class="n">Interface</span> <span class="nb">int</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">patch</span>
+                <span class="n">options</span><span class="p">:</span> <span class="p">{</span><span class="n">peer</span><span class="o">=</span><span class="n">phy</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span><span class="p">}</span>
+        <span class="n">Port</span> <span class="n">br</span><span class="o">-</span><span class="nb">int</span>
+            <span class="n">Interface</span> <span class="n">br</span><span class="o">-</span><span class="nb">int</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+        <span class="n">Port</span> <span class="s2">&quot;int-br-eth2&quot;</span>
+            <span class="n">Interface</span> <span class="s2">&quot;int-br-eth2&quot;</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">patch</span>
+                <span class="n">options</span><span class="p">:</span> <span class="p">{</span><span class="n">peer</span><span class="o">=</span><span class="s2">&quot;phy-br-eth2&quot;</span><span class="p">}</span>
+    <span class="n">Bridge</span> <span class="s2">&quot;br-eth2&quot;</span>
+        <span class="n">Port</span> <span class="s2">&quot;phy-br-eth2&quot;</span>
+            <span class="n">Interface</span> <span class="s2">&quot;phy-br-eth2&quot;</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">patch</span>
+                <span class="n">options</span><span class="p">:</span> <span class="p">{</span><span class="n">peer</span><span class="o">=</span><span class="s2">&quot;int-br-eth2&quot;</span><span class="p">}</span>
+        <span class="n">Port</span> <span class="s2">&quot;eth2&quot;</span>
+            <span class="n">Interface</span> <span class="s2">&quot;eth2&quot;</span>
+        <span class="n">Port</span> <span class="s2">&quot;br-eth2&quot;</span>
+            <span class="n">Interface</span> <span class="s2">&quot;br-eth2&quot;</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">internal</span>
+    <span class="n">ovs_version</span><span class="p">:</span> <span class="s2">&quot;2.5.0&quot;</span>
 </pre></div>
 </div>
-<p>sethostname:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">hostnamectl</span> <span class="nb">set</span><span class="o">-</span><span class="n">hostname</span> <span class="n">controller</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span>
-</pre></div>
 </div>
 </div>
 <div class="section" id="upload-image">
