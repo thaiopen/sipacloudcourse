@@ -89,6 +89,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#install-devstack">Install Devstack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#manage-devstack">Manage Devstack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-devstack-plugin">Add Devstack plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#neutron-network-default-settings">Neutron Network Default Settings</a></li>
 </ul>
 </li>
 </ul>
@@ -375,6 +376,9 @@ config ของ network ที่ devstack เตรียมไว้ให้
 <p class="last">Ctrl a d
 ./unstack.sh</p>
 </div>
+</div>
+<div class="section" id="neutron-network-default-settings">
+<h3>Neutron Network Default Settings<a class="headerlink" href="#neutron-network-default-settings" title="Permalink to this headline">¶</a></h3>
 <p>ค่า default ของ network ที่สร้างหลังจาก ที่ enable neutron โดยมี openswitch เป็นคนสร้างให้ เป็นค่า
 default เนื่องจากเราไม่ได้ปรับแต่ค่าตัวแปรใดๆใน local.conf ให้พิมพ์คำสั่ง openvswitch <code class="docutils literal"><span class="pre">ovs-vsctl</span> <span class="pre">show</span></code>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="n">show</span>

@@ -87,8 +87,15 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Openstack with Packstack</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#packstack">packstack</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#vagrant">vagrant</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#disk-prepare-for-cinder">Disk prepare for cinder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#run">Run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#disk-prepare-for-cinder">Disk prepare for cinder</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#install-packstack-2-way">Install Packstack 2 way</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#method2">Method2</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#edit-packstack-config">Edit Packstack Config</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#install-openstack-puppet-module">Install openstack puppet module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#network-management">Network Management</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#upload-image">upload image</a></li>
 </ul>
@@ -182,7 +189,8 @@ sudo echo &quot;nameserver 8.8.8.8&quot; &gt; /etc/resolv.conf
 yum install -y epel-release
 yum install -y centos-release-openstack-mitaka
 yum update -y
-yum install -y openstack-packstack
+#yum install -y openstack-packstack
+
 SCRIPT
 
 Vagrant.configure(&quot;2&quot;) do |config|
@@ -205,7 +213,7 @@ Vagrant.configure(&quot;2&quot;) do |config|
   config.vm.define :compute do |node|
             node.vm.network :private_network, :ip =&gt; &quot;10.0.0.11&quot;
             node.vm.network :private_network, :ip =&gt; &quot;20.0.0.11&quot;
-            node.vm.hostname= &quot;compute.example.com&quot;
+            node.vm.hostname = &quot;compute.example.com&quot;
             node.vm.provider :libvirt do |domain|
               domain.uri = &#39;qemu+unix:///system&#39;
               domain.driver = &#39;kvm&#39;
@@ -228,6 +236,8 @@ end
 
 <span class="n">vagrant</span> <span class="n">up</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">parallel</span>
 <span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">controller</span>
+
+<span class="c1">#test ping to compute, selinux, network</span>
 <span class="n">ping</span> <span class="n">compute</span>
 <span class="n">getenforce</span>
 <span class="n">systemctl</span> <span class="ow">is</span><span class="o">-</span><span class="n">active</span> <span class="n">NetworkManager</span>
@@ -237,41 +247,217 @@ end
 </div>
 <div class="section" id="disk-prepare-for-cinder">
 <h3>Disk prepare for cinder<a class="headerlink" href="#disk-prepare-for-cinder" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fdisk</span> <span class="o">-</span><span class="n">l</span>
+<p>เตรียม disk ให้กับ cinder ด้วยการสร้าง volume group ชื่อว่า  cinder-volumes</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
+<span class="n">fdisk</span> <span class="o">-</span><span class="n">l</span>
+<span class="o">...</span>
+<span class="n">Disk</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vdb</span><span class="p">:</span> <span class="mf">21.5</span> <span class="n">GB</span><span class="p">,</span> <span class="mi">21474836480</span> <span class="nb">bytes</span><span class="p">,</span> <span class="mi">41943040</span> <span class="n">sectors</span>
+<span class="n">Units</span> <span class="o">=</span> <span class="n">sectors</span> <span class="n">of</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">512</span> <span class="o">=</span> <span class="mi">512</span> <span class="nb">bytes</span>
+<span class="n">Sector</span> <span class="n">size</span> <span class="p">(</span><span class="n">logical</span><span class="o">/</span><span class="n">physical</span><span class="p">):</span> <span class="mi">512</span> <span class="nb">bytes</span> <span class="o">/</span> <span class="mi">512</span> <span class="nb">bytes</span>
+<span class="n">I</span><span class="o">/</span><span class="n">O</span> <span class="n">size</span> <span class="p">(</span><span class="n">minimum</span><span class="o">/</span><span class="n">optimal</span><span class="p">):</span> <span class="mi">512</span> <span class="nb">bytes</span> <span class="o">/</span> <span class="mi">512</span> <span class="nb">bytes</span>
+<span class="o">...</span>
+
+<span class="c1">##use /dev/vdb</span>
 <span class="n">pvcreate</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vdb</span>
 <span class="n">vgcreate</span> <span class="n">cinder</span><span class="o">-</span><span class="n">volumes</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vdb</span>
-<span class="n">packstack</span> <span class="o">--</span><span class="n">gen</span><span class="o">-</span><span class="n">answer</span><span class="o">-</span><span class="n">file</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
-
-<span class="c1">## การแก้ไขด้วยการใช้คำสั่ง ``sed``</span>
-<span class="n">sed</span> <span class="o">-</span><span class="n">i</span><span class="o">.</span><span class="n">orig</span> <span class="n">s</span><span class="o">/</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.158</span><span class="o">/</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="o">/</span><span class="n">g</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
-<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="n">s</span><span class="o">/</span><span class="n">CONFIG_HEAT_INSTALL</span><span class="o">=</span><span class="n">n</span><span class="o">/</span><span class="n">CONFIG_HEAT_INSTALL</span><span class="o">=</span><span class="n">y</span><span class="o">/</span><span class="n">g</span> <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
-
-      <span class="c1">## ตัวอย่าง</span>
-<span class="n">grep</span> <span class="o">-</span><span class="n">n</span> <span class="n">ADMIN_PW</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
-<span class="n">vim</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span> <span class="o">+</span><span class="p">(</span><span class="n">line</span> <span class="n">no</span><span class="p">)</span>
-
-<span class="n">CONFIG_KEYSTONE_ADMIN_PW</span><span class="o">=</span><span class="n">passwd</span>
-<span class="n">CONFIG_LBAAS_INSTALL</span><span class="o">=</span><span class="n">y</span>
-<span class="n">CONFIG_NEUTRON_METERING_AGENT_INSTALL</span><span class="o">=</span><span class="n">y</span>
-<span class="n">CONFIG_NEUTRON_FWAAS</span><span class="o">=</span><span class="n">y</span>
-
-<span class="n">CONFIG_NEUTRON_ML2_TYPE_DRIVERS</span><span class="o">=</span><span class="n">vlan</span>
-<span class="n">CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES</span><span class="o">=</span><span class="n">vlan</span>
-<span class="n">CONFIG_NEUTRON_ML2_VLAN_RANGES</span><span class="o">=</span><span class="n">physnet1</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">1000</span>
-
-<span class="n">CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS</span><span class="o">=</span><span class="n">physnet1</span><span class="p">:</span><span class="n">br</span><span class="o">-</span><span class="n">eth2</span>
-<span class="n">CONFIG_NEUTRON_OVS_BRIDGE_IFACES</span><span class="o">=</span><span class="n">br</span><span class="o">-</span><span class="n">eth2</span><span class="p">:</span><span class="n">eth2</span>
-
-<span class="n">CONFIG_HEAT_CFN_INSTALL</span><span class="o">=</span><span class="n">y</span>
-<span class="n">CONFIG_HORIZON_SSL</span><span class="o">=</span><span class="n">y</span>
-<span class="n">CONFIG_PROVISION_DEMO</span><span class="o">=</span><span class="n">n</span>
 </pre></div>
 </div>
-<p>Download complete file <code class="xref download docutils literal"><span class="pre">answerfile001.txt</span></code>.</p>
+<div class="section" id="install-packstack-2-way">
+<h4>Install Packstack 2 way<a class="headerlink" href="#install-packstack-2-way" title="Permalink to this headline">¶</a></h4>
+<p>การติดตั้ง Openstack ด้วย packstack เป็นการติดตั้งบน Redhat, CentOS7, Fedora โดยมีเบื้องหลังการ
+ติดตั้งโดยการใช้ puppet module สามารถติดตั้ง packstack ได้ 2
+Method1
+&#8212;&#8212;-
+ติดตั้งผ่าน repository:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">openstack</span><span class="o">-</span><span class="n">packstack</span>
+</pre></div>
 </div>
-<div class="section" id="run">
-<h3>Run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">packstack</span> <span class="o">--</span><span class="n">answer</span><span class="o">-</span><span class="n">file</span> <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
+</div>
+</div>
+<div class="section" id="method2">
+<h3>Method2<a class="headerlink" href="#method2" title="Permalink to this headline">¶</a></h3>
+<p>ติดตั้งผ่าน source code (<a class="reference external" href="https://github.com/openstack/packstack">https://github.com/openstack/packstack</a>):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="n">git</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">openstack</span><span class="o">/</span><span class="n">packstack</span><span class="o">.</span><span class="n">git</span>
+
+<span class="c1">##Follow activity</span>
+<span class="n">cd</span> <span class="n">packstack</span>
+<span class="n">git</span> <span class="n">log</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">mystack</span>
+
+<span class="c1">#install python dependency</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="n">python</span><span class="o">-</span><span class="n">pip</span> <span class="n">python</span><span class="o">-</span><span class="n">devel</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">yum</span> <span class="n">groupinstall</span> <span class="s2">&quot;Development Tools&quot;</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="n">libffi</span><span class="o">-</span><span class="n">devel</span> <span class="n">openssl</span><span class="o">-</span><span class="n">devel</span>
+
+<span class="c1">#install</span>
+<span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+<span class="o">...</span>
+<span class="n">Using</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python2</span><span class="o">.</span><span class="mi">7</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span>
+<span class="n">Finished</span> <span class="n">processing</span> <span class="n">dependencies</span> <span class="k">for</span> <span class="n">packstack</span><span class="o">===</span><span class="mf">8.0</span><span class="o">.</span><span class="mf">0.0</span><span class="n">rc1</span><span class="o">.</span><span class="n">dev114</span><span class="o">.</span><span class="n">gae579f6</span>
+
+<span class="c1">#copy module packstack ไปยัง puppet</span>
+<span class="n">ls</span>
+<span class="n">cp</span> <span class="o">-</span><span class="n">r</span> <span class="n">packstack</span><span class="o">/</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">packstack</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span>
+</pre></div>
+</div>
+<p>หลังจากติดตั้ง packstack ทั้งสองวิธีแล้ว จะมี คำสั่ง <code class="docutils literal"><span class="pre">packstack</span></code> สำหรับการติดตั้ง openstack
+โดยจะสร้าง answerfile มาแล้วทำการแก้ไข:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#go back to /root</span>
+<span class="n">cd</span> <span class="o">~</span>
+
+<span class="c1">## generate answer file with</span>
+<span class="n">packstack</span> <span class="o">--</span><span class="n">gen</span><span class="o">-</span><span class="n">answer</span><span class="o">-</span><span class="n">file</span> <span class="s2">&quot;answer-$(date +%b-</span><span class="si">%d</span><span class="s2">-%y).txt&quot;</span>
+<span class="n">ls</span>  <span class="n">answer</span><span class="o">-*.</span><span class="n">txt</span>
+
+<span class="c1">## packstack จะใช้ ip ของ eth0 เป็น ip ของ Management ip ของ openstack แต่เราจะใช้</span>
+<span class="c1">## ip ของ eth1 แทน</span>
+<span class="c1">## check ip in answerfile</span>
+
+<span class="n">grep</span> <span class="n">HOSTS</span> <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
+<span class="n">CONFIG_COMPUTE_HOSTS</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.9</span>
+<span class="n">CONFIG_NETWORK_HOSTS</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.9</span>
+
+<span class="c1">## ดูค่า ip ของ eth0, eth1</span>
+
+<span class="n">ip</span> <span class="o">-</span><span class="mi">4</span> <span class="n">a</span> <span class="n">show</span> <span class="n">eth0</span> <span class="o">|</span> <span class="n">awk</span> <span class="s1">&#39;/inet/ {print $2;}&#39;</span>
+<span class="mf">192.168</span><span class="o">.</span><span class="mf">121.9</span><span class="o">/</span><span class="mi">24</span>
+<span class="n">ip</span> <span class="o">-</span><span class="mi">4</span> <span class="n">a</span> <span class="n">show</span> <span class="n">eth1</span> <span class="o">|</span> <span class="n">awk</span> <span class="s1">&#39;/inet/ {print $2;}&#39;</span>
+<span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="o">/</span><span class="mi">24</span>
+
+<span class="c1">## การแก้ไขด้วยการใช้คำสั่ง ``sed``</span>
+
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span><span class="o">.</span><span class="n">orig</span> <span class="n">s</span><span class="o">/</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.9</span><span class="o">/</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="o">/</span><span class="n">g</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<div class="section" id="edit-packstack-config">
+<h4>Edit Packstack Config<a class="headerlink" href="#edit-packstack-config" title="Permalink to this headline">¶</a></h4>
+<p>ไฟล์ answerfile นี้ สามารถแก้ไข และ run ซ้ำได้ แต่ห้าม generate ใหม่</p>
+<blockquote>
+<div><blockquote>
+<div>## ตัวอย่าง</div></blockquote>
+<p>grep -n ADMIN_PW  answerfile001.txt
+vim  answerfile001.txt +(line no)</p>
+<p>CONFIG_KEYSTONE_ADMIN_PW=password
+CONFIG_LBAAS_INSTALL=y
+CONFIG_NEUTRON_METERING_AGENT_INSTALL=y
+CONFIG_NEUTRON_FWAAS=y</p>
+<p>CONFIG_NEUTRON_ML2_TYPE_DRIVERS=vlan
+CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES=vlan
+CONFIG_NEUTRON_ML2_VLAN_RANGES=physnet2:1:1000</p>
+<p>CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet2:br-eth2
+CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:eth0,br-eth2:eth2</p>
+<p>CONFIG_HEAT_CFN_INSTALL=y
+CONFIG_HORIZON_SSL=y
+CONFIG_PROVISION_DEMO=n</p>
+</div></blockquote>
+<p>การแก้ไขค่าจะใช้ crudini เป็นตัวช่วย:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>answerfile=answer-Jul-21-16.txt
+crudini --set $answerfile general CONFIG_KEYSTONE_ADMIN_PW password
+crudini --set $answerfile general CONFIG_LBAAS_INSTALL y
+crudini --set $answerfile general CONFIG_NEUTRON_METERING_AGENT_INSTALL y
+crudini --set $answerfile general CONFIG_NEUTRON_FWAAS y
+
+crudini --set $answerfile general CONFIG_NEUTRON_ML2_TYPE_DRIVERS vlan,vxlan,gre,flat,local
+crudini --set $answerfile general CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES local,vlan,gre,vxlan
+
+crudini --set $answerfile general CONFIG_NEUTRON_ML2_VLAN_RANGES physnet2:1:1000
+
+crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS ext-net:br-ex,physnet2:br-eth2
+crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_IFACES br-ex:eth0,br-eth2:eth2
+
+crudini --set $answerfile general CONFIG_HEAT_INSTALL y
+crudini --set $answerfile general CONFIG_TROVE_INSTALL y
+
+crudini --set $answerfile general CONFIG_HEAT_CFN_INSTALL y
+crudini --set $answerfile general CONFIG_HORIZON_SSL y
+crudini --set $answerfile general CONFIG_PROVISION_DEMO n
+crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="install-openstack-puppet-module">
+<h3>Install openstack puppet module<a class="headerlink" href="#install-openstack-puppet-module" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>::</dt>
+<dd>export GEM_HOME=/tmp/somedir
+gem install r10k
+## go to packstacksource
+cd ~/packstack
+/tmp/somedir/bin/r10k puppetfile install -v</dd>
+</dl>
+<p>จะเป็นการติดตั้ง puppet module</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">aodh</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">ceilometer</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">cinder</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">glance</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">gnocchi</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">heat</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">horizon</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">ironic</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">keystone</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">manila</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">neutron</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">nova</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">openstack_extras</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">openstacklib</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">oslo</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">sahara</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">swift</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">tempest</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">trove</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">vswitch</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">apache</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">certmonger</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">concat</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">firewall</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">inifile</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">memcached</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">mongodb</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">mysql</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">nssdb</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">rabbitmq</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">redis</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">remote</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">rsync</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">ssh</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">stdlib</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">sysctl</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">vcsrepo</span>
+<span class="n">INFO</span>         <span class="o">-&gt;</span> <span class="n">Updating</span> <span class="n">module</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">puppet</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="n">xinetd</span>
+</pre></div>
+</div>
+<p>copy module</p>
+<blockquote>
+<div>cp -r packstack/puppet/modules/packstack /usr/share/openstack-puppet/modules</div></blockquote>
+<p>Run</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pki</span><span class="o">/</span><span class="n">tls</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span>
+<span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">sha256</span> <span class="o">-</span><span class="n">newkey</span> <span class="n">rsa</span><span class="p">:</span><span class="mi">2048</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">certificate</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">out</span> <span class="n">selfcert</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">days</span> <span class="mi">1024</span> <span class="o">-</span><span class="n">nodes</span>
+<span class="c1">## answer question</span>
+<span class="n">Country</span> <span class="n">Name</span> <span class="p">(</span><span class="mi">2</span> <span class="n">letter</span> <span class="n">code</span><span class="p">)</span> <span class="p">[</span><span class="n">XX</span><span class="p">]:</span><span class="n">TH</span>
+<span class="n">State</span> <span class="ow">or</span> <span class="n">Province</span> <span class="n">Name</span> <span class="p">(</span><span class="n">full</span> <span class="n">name</span><span class="p">)</span> <span class="p">[]:</span><span class="n">Bangkok</span>
+<span class="n">Locality</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">city</span><span class="p">)</span> <span class="p">[</span><span class="n">Default</span> <span class="n">City</span><span class="p">]:</span><span class="n">Bangkok</span>
+<span class="n">Organization</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">company</span><span class="p">)</span> <span class="p">[</span><span class="n">Default</span> <span class="n">Company</span> <span class="n">Ltd</span><span class="p">]:</span><span class="n">MyOpenstack</span>
+<span class="n">Organizational</span> <span class="n">Unit</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span> <span class="p">[]:</span><span class="n">ITDepartment</span>
+<span class="n">Common</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">your</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">your</span> <span class="n">server</span><span class="s1">&#39;s hostname) []:controller.example.com</span>
+<span class="n">Email</span> <span class="n">Address</span> <span class="p">[]:</span><span class="n">admin</span><span class="nd">@example</span><span class="o">.</span><span class="n">com</span>
+<span class="n">Country</span> <span class="n">Name</span> <span class="p">(</span><span class="mi">2</span> <span class="n">letter</span> <span class="n">code</span><span class="p">)</span> <span class="p">[</span><span class="n">XX</span><span class="p">]:</span><span class="n">TH</span>
+<span class="n">State</span> <span class="ow">or</span> <span class="n">Province</span> <span class="n">Name</span> <span class="p">(</span><span class="n">full</span> <span class="n">name</span><span class="p">)</span> <span class="p">[]:</span><span class="n">Bangkok</span>
+<span class="n">Locality</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">city</span><span class="p">)</span> <span class="p">[</span><span class="n">Default</span> <span class="n">City</span><span class="p">]:</span><span class="n">Bangkok</span>
+<span class="n">Organization</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">company</span><span class="p">)</span> <span class="p">[</span><span class="n">Default</span> <span class="n">Company</span> <span class="n">Ltd</span><span class="p">]:</span><span class="n">MyOpenstack</span>
+<span class="n">Organizational</span> <span class="n">Unit</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span> <span class="p">[]:</span><span class="n">ITDepartment</span>
+<span class="n">Common</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">your</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">your</span> <span class="n">server</span><span class="s1">&#39;s hostname) []:controller.example.com</span>
+<span class="n">Email</span> <span class="n">Address</span> <span class="p">[]:</span><span class="n">admin</span><span class="nd">@example</span><span class="o">.</span><span class="n">com</span>
+
+<span class="n">mv</span> <span class="n">certificate</span><span class="o">.</span><span class="n">key</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pki</span><span class="o">/</span><span class="n">tls</span><span class="o">/</span><span class="n">private</span><span class="o">/</span><span class="n">selfkey</span><span class="o">.</span><span class="n">key</span>
+<span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="n">packstackca</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span>
+<span class="n">cp</span> <span class="n">ssl_vnc</span><span class="o">.</span><span class="n">crt</span>  <span class="o">~/</span><span class="n">packstackca</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="n">ssl_vnc</span><span class="o">.</span><span class="n">crt</span>
+
+
+<span class="n">packstack</span> <span class="o">--</span><span class="n">answer</span><span class="o">-</span><span class="n">file</span> <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
 </pre></div>
 </div>
 <img alt="_images/openstack-two-machine-two-nic.png" src="_images/openstack-two-machine-two-nic.png" />

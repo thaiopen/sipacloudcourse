@@ -22,6 +22,8 @@ Download complete file :download:`Vagrantfile3 <./_source/Vagrantfile3>`
 
     vagrant up --no-parallel
     vagrant ssh controller
+
+    #test ping to compute, selinux, network
     ping compute
     getenforce
     systemctl is-active NetworkManager
@@ -29,44 +31,221 @@ Download complete file :download:`Vagrantfile3 <./_source/Vagrantfile3>`
 
 Disk prepare for cinder
 -----------------------
+เตรียม disk ให้กับ cinder ด้วยการสร้าง volume group ชื่อว่า  cinder-volumes
 ::
 
+    sudo su -
     fdisk -l
+    ...
+    Disk /dev/vdb: 21.5 GB, 21474836480 bytes, 41943040 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    ...
+
+    ##use /dev/vdb
     pvcreate /dev/vdb
     vgcreate cinder-volumes /dev/vdb
-    packstack --gen-answer-file  answerfile001.txt
+
+Install Packstack 2 way
+***********************
+การติดตั้ง Openstack ด้วย packstack เป็นการติดตั้งบน Redhat, CentOS7, Fedora โดยมีเบื้องหลังการ
+ติดตั้งโดยการใช้ puppet module สามารถติดตั้ง packstack ได้ 2
+Method1
+-------
+ติดตั้งผ่าน repository::
+
+    sudo su -
+    yum install -y openstack-packstack
+
+Method2
+-------
+ติดตั้งผ่าน source code (https://github.com/openstack/packstack)::
+
+    sudo su -
+    yum install git -y
+    git clone git://github.com/openstack/packstack.git
+
+    ##Follow activity
+    cd packstack
+    git log
+    git checkout -b mystack
+
+    #install python dependency
+    yum install python-pip python-devel -y
+    yum groupinstall "Development Tools" -y
+    yum install libffi-devel openssl-devel
+
+    #install
+    python setup.py install
+    ...
+    Using /usr/lib/python2.7/site-packages
+    Finished processing dependencies for packstack===8.0.0.0rc1.dev114.gae579f6
+
+    #copy module packstack ไปยัง puppet
+    ls
+    cp -r packstack/puppet/modules/packstack /usr/share/openstack-puppet/modules
+
+หลังจากติดตั้ง packstack ทั้งสองวิธีแล้ว จะมี คำสั่ง ``packstack`` สำหรับการติดตั้ง openstack
+โดยจะสร้าง answerfile มาแล้วทำการแก้ไข::
+
+    #go back to /root
+    cd ~
+
+    ## generate answer file with
+    packstack --gen-answer-file "answer-$(date +%b-%d-%y).txt"
+    ls  answer-*.txt
+
+    ## packstack จะใช้ ip ของ eth0 เป็น ip ของ Management ip ของ openstack แต่เราจะใช้
+    ## ip ของ eth1 แทน
+    ## check ip in answerfile
+
+    grep HOSTS answer-Jul-21-16.txt
+    CONFIG_COMPUTE_HOSTS=192.168.121.9
+    CONFIG_NETWORK_HOSTS=192.168.121.9
+
+    ## ดูค่า ip ของ eth0, eth1
+
+    ip -4 a show eth0 | awk '/inet/ {print $2;}'
+    192.168.121.9/24
+    ip -4 a show eth1 | awk '/inet/ {print $2;}'
+    10.0.0.10/24
 
     ## การแก้ไขด้วยการใช้คำสั่ง ``sed``
-    sed -i.orig s/192.168.121.158/10.0.0.10/g  answerfile001.txt
-    sed -i s/CONFIG_HEAT_INSTALL=n/CONFIG_HEAT_INSTALL=y/g answerfile001.txt
+
+    sed -i.orig s/192.168.121.9/10.0.0.10/g  answer-Jul-21-16.txt
+
+Edit Packstack Config
+*********************
+ไฟล์ answerfile นี้ สามารถแก้ไข และ run ซ้ำได้ แต่ห้าม generate ใหม่
 
 	  ## ตัวอย่าง
     grep -n ADMIN_PW  answerfile001.txt
     vim  answerfile001.txt +(line no)
 
-    CONFIG_KEYSTONE_ADMIN_PW=passwd
+    CONFIG_KEYSTONE_ADMIN_PW=password
     CONFIG_LBAAS_INSTALL=y
     CONFIG_NEUTRON_METERING_AGENT_INSTALL=y
     CONFIG_NEUTRON_FWAAS=y
 
     CONFIG_NEUTRON_ML2_TYPE_DRIVERS=vlan
     CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES=vlan
-    CONFIG_NEUTRON_ML2_VLAN_RANGES=physnet1:1:1000
+    CONFIG_NEUTRON_ML2_VLAN_RANGES=physnet2:1:1000
 
-    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-eth2
-    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-eth2:eth2
+    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet2:br-eth2
+    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:eth0,br-eth2:eth2
 
     CONFIG_HEAT_CFN_INSTALL=y
     CONFIG_HORIZON_SSL=y
     CONFIG_PROVISION_DEMO=n
 
-Download complete file :download:`answerfile001.txt <./_source/answerfile001.txt>`.
+การแก้ไขค่าจะใช้ crudini เป็นตัวช่วย::
 
-Run
----
+    answerfile=answer-Jul-21-16.txt
+    crudini --set $answerfile general CONFIG_KEYSTONE_ADMIN_PW password
+    crudini --set $answerfile general CONFIG_LBAAS_INSTALL y
+    crudini --set $answerfile general CONFIG_NEUTRON_METERING_AGENT_INSTALL y
+    crudini --set $answerfile general CONFIG_NEUTRON_FWAAS y
+
+    crudini --set $answerfile general CONFIG_NEUTRON_ML2_TYPE_DRIVERS vlan,vxlan,gre,flat,local
+    crudini --set $answerfile general CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES local,vlan,gre,vxlan
+
+    crudini --set $answerfile general CONFIG_NEUTRON_ML2_VLAN_RANGES physnet2:1:1000
+
+    crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS ext-net:br-ex,physnet2:br-eth2
+    crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_IFACES br-ex:eth0,br-eth2:eth2
+
+    crudini --set $answerfile general CONFIG_HEAT_INSTALL y
+    crudini --set $answerfile general CONFIG_TROVE_INSTALL y
+
+    crudini --set $answerfile general CONFIG_HEAT_CFN_INSTALL y
+    crudini --set $answerfile general CONFIG_HORIZON_SSL y
+    crudini --set $answerfile general CONFIG_PROVISION_DEMO n
+    crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
+
+Install openstack puppet module
+-------------------------------
+::
+    export GEM_HOME=/tmp/somedir
+    gem install r10k
+    ## go to packstacksource
+    cd ~/packstack
+    /tmp/somedir/bin/r10k puppetfile install -v
+
+จะเป็นการติดตั้ง puppet module
 ::
 
-    packstack --answer-file answerfile001.txt
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/aodh
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/ceilometer
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/cinder
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/glance
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/gnocchi
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/heat
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/horizon
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/ironic
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/keystone
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/manila
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/neutron
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/nova
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/openstack_extras
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/openstacklib
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/oslo
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/sahara
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/swift
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/tempest
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/trove
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/vswitch
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/apache
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/certmonger
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/concat
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/firewall
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/inifile
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/memcached
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/mongodb
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/mysql
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/nssdb
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/rabbitmq
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/redis
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/remote
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/rsync
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/ssh
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/stdlib
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/sysctl
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/vcsrepo
+    INFO	 -> Updating module /usr/share/openstack-puppet/modules/xinetd
+
+copy module
+
+    cp -r packstack/puppet/modules/packstack /usr/share/openstack-puppet/modules
+
+
+Run
+::
+
+    cd /etc/pki/tls/certs/
+    openssl req -x509 -sha256 -newkey rsa:2048 -keyout certificate.key -out selfcert.crt -days 1024 -nodes
+    ## answer question
+    Country Name (2 letter code) [XX]:TH
+    State or Province Name (full name) []:Bangkok
+    Locality Name (eg, city) [Default City]:Bangkok
+    Organization Name (eg, company) [Default Company Ltd]:MyOpenstack
+    Organizational Unit Name (eg, section) []:ITDepartment
+    Common Name (eg, your name or your server's hostname) []:controller.example.com
+    Email Address []:admin@example.com
+    Country Name (2 letter code) [XX]:TH
+    State or Province Name (full name) []:Bangkok
+    Locality Name (eg, city) [Default City]:Bangkok
+    Organization Name (eg, company) [Default Company Ltd]:MyOpenstack
+    Organizational Unit Name (eg, section) []:ITDepartment
+    Common Name (eg, your name or your server's hostname) []:controller.example.com
+    Email Address []:admin@example.com
+
+    mv certificate.key /etc/pki/tls/private/selfkey.key
+    mkdir -p ~/packstackca/certs/
+    cp ssl_vnc.crt  ~/packstackca/certs/10.0.0.10ssl_vnc.crt
+
+
+    packstack --answer-file answer-Jul-21-16.txt
 
 
 .. image:: _images/openstack-two-machine-two-nic.png
