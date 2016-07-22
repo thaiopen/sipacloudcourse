@@ -124,6 +124,8 @@ Edit Packstack Config
 
     vim  answer-Jul-21-16.txt  +333
 
+สรุป config เบื้องต้นสำหรับการปรับแต่ง::
+
     CONFIG_KEYSTONE_ADMIN_PW=password
     CONFIG_LBAAS_INSTALL=y
     CONFIG_NEUTRON_METERING_AGENT_INSTALL=y
@@ -255,6 +257,22 @@ Run
     cd ~
     packstack --answer-file answer-Jul-21-16.txt
 
+    ## จะมี error แบบนี้
+    Preparing Nova VNC Proxy entries                  [ ERROR ]
+    ERROR : [Errno 2] No such file or directory: '~/packstackca/certs/10.0.0.10ssl_vnc.crt'
+
+    ## copy key ``selfcert.crt`` from ``/etc/pki/tls/certs/`` to ``~/packstackca/certs/``
+    ls /etc/pki/tls/certs/
+    cp /etc/pki/tls/certs/ssl_vnc.crt ~/packstackca/certs/10.0.0.10ssl_vnc.crt
+
+    ## edit path ``~/packstackca/`` to ``/root/packstackca/``
+    grep -in  packstackca answer-Jul-22-16.txt
+    249:CONFIG_SSL_CERT_DIR=~/packstackca/
+
+    crudini --set  answer-Jul-22-16.txt general CONFIG_SSL_CERT_DIR /root/packstackca/
+
+    ## run again
+    packstack --answer-file answer-Jul-21-16.txt
 
 .. image:: _images/openstack-two-machine-two-nic.png
 
