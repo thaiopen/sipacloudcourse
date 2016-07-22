@@ -82,9 +82,6 @@ Method2
     Using /usr/lib/python2.7/site-packages
     Finished processing dependencies for packstack===8.0.0.0rc1.dev114.gae579f6
 
-    #copy module packstack ไปยัง puppet
-    ls
-    cp -r packstack/puppet/modules/packstack /usr/share/openstack-puppet/modules
 
 หลังจากติดตั้ง packstack ทั้งสองวิธีแล้ว จะมี คำสั่ง ``packstack`` สำหรับการติดตั้ง openstack
 โดยจะสร้าง answerfile มาแล้วทำการแก้ไข::
