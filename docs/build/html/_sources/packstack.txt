@@ -249,9 +249,8 @@ Run
 
     mv selfkey.key /etc/pki/tls/private/selfkey.key
     mkdir -p ~/packstackca/certs/
-    
 
-
+    cd ~
     packstack --answer-file answer-Jul-21-16.txt
 
 
