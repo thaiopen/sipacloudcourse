@@ -89,7 +89,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#vagrant">vagrant</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#disk-prepare-for-cinder">Disk prepare for cinder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#install-packstack-2-way">Install Packstack 2 way</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#edit-packstack-config">Edit Packstack Config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#install-openstack-puppet-module">Install openstack puppet module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neutron-network">Neutron Network</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bridge-physical-interface-and-bridge">Bridge physical interface and bridge</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#upload-image">upload image</a></li>
 </ul>
 </li>
@@ -322,8 +327,10 @@ end
 <span class="n">sed</span> <span class="o">-</span><span class="n">i</span><span class="o">.</span><span class="n">orig</span> <span class="n">s</span><span class="o">/</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.9</span><span class="o">/</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="o">/</span><span class="n">g</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
 </pre></div>
 </div>
+</div>
+</div>
 <div class="section" id="edit-packstack-config">
-<h6>Edit Packstack Config<a class="headerlink" href="#edit-packstack-config" title="Permalink to this headline">¶</a></h6>
+<h4>Edit Packstack Config<a class="headerlink" href="#edit-packstack-config" title="Permalink to this headline">¶</a></h4>
 <p>ไฟล์ answerfile นี้ สามารถแก้ไข และ run ซ้ำได้ แต่ห้าม generate ใหม่</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="c1">## ตัวอย่างการใช้คำสั่ง  grep เพื่อช่วยค้นหาคำ</span>
 <span class="n">grep</span> <span class="o">-</span><span class="n">n</span> <span class="n">ADMIN_PW</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
@@ -377,8 +384,6 @@ crudini --set $answerfile general CONFIG_HORIZON_SSL y
 crudini --set $answerfile general CONFIG_PROVISION_DEMO n
 crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 </pre></div>
-</div>
-</div>
 </div>
 </div>
 <div class="section" id="install-openstack-puppet-module">
@@ -485,6 +490,10 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 <img alt="_images/openstack-two-machine-two-nic.png" src="_images/openstack-two-machine-two-nic.png" />
 <p>ผลการ Run</p>
 <img alt="_images/openstack001.png" src="_images/openstack001.png" />
+</div>
+</div>
+<div class="section" id="neutron-network">
+<h3>Neutron Network<a class="headerlink" href="#neutron-network" title="Permalink to this headline">¶</a></h3>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">เนื่องจากเป็นการทดสอบบน vagrant จึงใช้ eth0 สำหรับการเชื่อมต่อ internet เท่านั้น และใช้ eth0
@@ -492,6 +501,8 @@ external network และ eth1 เป็น manament network ส่วน eth2 
 </div>
 <p>Openvswith จะทำหน้าที่สร้าง ระบบโครงสร้าง virtual network (ovs-system)ให้ ได้แก่ bridge ชื่อ
 ิbr-ex, br-int, br-tun และ เราจะต้องเชื่อมต่อ bridge นี้กับ interface จริง ดังรูป</p>
+<div class="section" id="bridge-physical-interface-and-bridge">
+<h4>Bridge physical interface and bridge<a class="headerlink" href="#bridge-physical-interface-and-bridge" title="Permalink to this headline">¶</a></h4>
 <p>์Network Configuration ใน <code class="docutils literal"><span class="pre">/etc/sysconfig/network-scripts/</span></code> จะแสดงการเชื่อมต่อระหว่าง
 br-ex &lt;&#8211;&gt; eth0</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="n">ifcfg</span><span class="o">-</span><span class="n">br</span><span class="o">-</span><span class="n">ex</span>
