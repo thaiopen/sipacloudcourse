@@ -118,6 +118,7 @@ Method2
 Edit Packstack Config
 *********************
 ไฟล์ answerfile นี้ สามารถแก้ไข และ run ซ้ำได้ แต่ห้าม generate ใหม่
+::
 
 	  ## ตัวอย่าง
     grep -n ADMIN_PW  answerfile001.txt
@@ -166,6 +167,7 @@ Edit Packstack Config
 Install openstack puppet module
 -------------------------------
 ::
+
     export GEM_HOME=/tmp/somedir
     gem install r10k
     ## go to packstacksource
@@ -214,10 +216,9 @@ Install openstack puppet module
     INFO	 -> Updating module /usr/share/openstack-puppet/modules/vcsrepo
     INFO	 -> Updating module /usr/share/openstack-puppet/modules/xinetd
 
-copy module
+copy module::
 
     cp -r packstack/puppet/modules/packstack /usr/share/openstack-puppet/modules
-
 
 Run
 ::
@@ -265,6 +266,7 @@ Network Management
 packstack จะทำหน้าที่สร้าง ระบบโครงสร้าง virtual network (ovs-system)ให้ ได้แก่ bridge ชื่อ
 ิbr-ex, br-int, br-tun และ เราจะต้องเชื่อมต่อ bridge นี้กับ interface จริง (physical interface)
 ::
+
   # openvswitch command
   ovs-vsctl show
 
@@ -341,7 +343,7 @@ upload image
 (packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)
 ::
 
-	source keystonerc_admin
+  source keystonerc_admin
   curl http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img | glance \
          image-create --name='cirros image' --visibility=public --container-format=bare --disk-format=qcow2
 
