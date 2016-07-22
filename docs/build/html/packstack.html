@@ -333,9 +333,11 @@ end
 <div class="section" id="edit-packstack-config">
 <h4>Edit Packstack Config<a class="headerlink" href="#edit-packstack-config" title="Permalink to this headline">¶</a></h4>
 <p>ไฟล์ answerfile นี้ สามารถแก้ไข และ run ซ้ำได้ แต่ห้าม generate ใหม่</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="c1">## ตัวอย่าง</span>
-<span class="n">grep</span> <span class="o">-</span><span class="n">n</span> <span class="n">ADMIN_PW</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span>
-<span class="n">vim</span>  <span class="n">answerfile001</span><span class="o">.</span><span class="n">txt</span> <span class="o">+</span><span class="p">(</span><span class="n">line</span> <span class="n">no</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="c1">## ตัวอย่างการใช้คำสั่ง  grep เพื่อช่วยค้นหาคำ</span>
+<span class="n">grep</span> <span class="o">-</span><span class="n">n</span> <span class="n">ADMIN_PW</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
+<span class="mi">333</span><span class="p">:</span><span class="n">CONFIG_KEYSTONE_ADMIN_PW</span><span class="o">=</span><span class="n">password</span>
+
+<span class="n">vim</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>  <span class="o">+</span><span class="mi">333</span>
 
 <span class="n">CONFIG_KEYSTONE_ADMIN_PW</span><span class="o">=</span><span class="n">password</span>
 <span class="n">CONFIG_LBAAS_INSTALL</span><span class="o">=</span><span class="n">y</span>
