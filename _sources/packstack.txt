@@ -118,9 +118,11 @@ Edit Packstack Config
 ไฟล์ answerfile นี้ สามารถแก้ไข และ run ซ้ำได้ แต่ห้าม generate ใหม่
 ::
 
-	  ## ตัวอย่าง
-    grep -n ADMIN_PW  answerfile001.txt
-    vim  answerfile001.txt +(line no)
+	  ## ตัวอย่างการใช้คำสั่ง  grep เพื่อช่วยค้นหาคำ
+    grep -n ADMIN_PW  answer-Jul-21-16.txt
+    333:CONFIG_KEYSTONE_ADMIN_PW=password
+
+    vim  answer-Jul-21-16.txt  +333
 
     CONFIG_KEYSTONE_ADMIN_PW=password
     CONFIG_LBAAS_INSTALL=y
