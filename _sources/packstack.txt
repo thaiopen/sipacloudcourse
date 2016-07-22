@@ -142,6 +142,8 @@ Edit Packstack Config
 
 การแก้ไขค่าจะใช้ crudini เป็นตัวช่วย::
 
+    yum install crudini rubygems -y
+    # name file may difference
     answerfile=answer-Jul-21-16.txt
     crudini --set $answerfile general CONFIG_KEYSTONE_ADMIN_PW password
     crudini --set $answerfile general CONFIG_LBAAS_INSTALL y
@@ -170,7 +172,11 @@ Install openstack puppet module
 
     export GEM_HOME=/tmp/somedir
     gem install r10k
-    ## go to packstacksource
+    ...
+    Installing ri documentation for r10k-2.3.0
+    16 gems installed
+
+    ## go to packstack source
     cd ~/packstack
     /tmp/somedir/bin/r10k puppetfile install -v
 
@@ -224,7 +230,7 @@ Run
 ::
 
     cd /etc/pki/tls/certs/
-    openssl req -x509 -sha256 -newkey rsa:2048 -keyout certificate.key -out selfcert.crt -days 1024 -nodes
+    openssl req -x509 -sha256 -newkey rsa:2048 -keyout selfkey.key -out selfcert.crt -days 1024 -nodes
     ## answer question
     Country Name (2 letter code) [XX]:TH
     State or Province Name (full name) []:Bangkok
@@ -241,7 +247,7 @@ Run
     Common Name (eg, your name or your server's hostname) []:controller.example.com
     Email Address []:admin@example.com
 
-    mv certificate.key /etc/pki/tls/private/selfkey.key
+    mv selfkey.key /etc/pki/tls/private/selfkey.key
     mkdir -p ~/packstackca/certs/
     cp ssl_vnc.crt  ~/packstackca/certs/10.0.0.10ssl_vnc.crt
 

@@ -357,7 +357,9 @@ end
 </pre></div>
 </div>
 <p>การแก้ไขค่าจะใช้ crudini เป็นตัวช่วย:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>answerfile=answer-Jul-21-16.txt
+<div class="highlight-default"><div class="highlight"><pre><span></span>yum install crudini rubygems -y
+# name file may difference
+answerfile=answer-Jul-21-16.txt
 crudini --set $answerfile general CONFIG_KEYSTONE_ADMIN_PW password
 crudini --set $answerfile general CONFIG_LBAAS_INSTALL y
 crudini --set $answerfile general CONFIG_NEUTRON_METERING_AGENT_INSTALL y
@@ -386,7 +388,11 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 <h3>Install openstack puppet module<a class="headerlink" href="#install-openstack-puppet-module" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">GEM_HOME</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">somedir</span>
 <span class="n">gem</span> <span class="n">install</span> <span class="n">r10k</span>
-<span class="c1">## go to packstacksource</span>
+<span class="o">...</span>
+<span class="n">Installing</span> <span class="n">ri</span> <span class="n">documentation</span> <span class="k">for</span> <span class="n">r10k</span><span class="o">-</span><span class="mf">2.3</span><span class="o">.</span><span class="mi">0</span>
+<span class="mi">16</span> <span class="n">gems</span> <span class="n">installed</span>
+
+<span class="c1">## go to packstack source</span>
 <span class="n">cd</span> <span class="o">~/</span><span class="n">packstack</span>
 <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">somedir</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">r10k</span> <span class="n">puppetfile</span> <span class="n">install</span> <span class="o">-</span><span class="n">v</span>
 </pre></div>
@@ -438,7 +444,7 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 </div>
 <p>Run</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pki</span><span class="o">/</span><span class="n">tls</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span>
-<span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">sha256</span> <span class="o">-</span><span class="n">newkey</span> <span class="n">rsa</span><span class="p">:</span><span class="mi">2048</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">certificate</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">out</span> <span class="n">selfcert</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">days</span> <span class="mi">1024</span> <span class="o">-</span><span class="n">nodes</span>
+<span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">sha256</span> <span class="o">-</span><span class="n">newkey</span> <span class="n">rsa</span><span class="p">:</span><span class="mi">2048</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">selfkey</span><span class="o">.</span><span class="n">key</span> <span class="o">-</span><span class="n">out</span> <span class="n">selfcert</span><span class="o">.</span><span class="n">crt</span> <span class="o">-</span><span class="n">days</span> <span class="mi">1024</span> <span class="o">-</span><span class="n">nodes</span>
 <span class="c1">## answer question</span>
 <span class="n">Country</span> <span class="n">Name</span> <span class="p">(</span><span class="mi">2</span> <span class="n">letter</span> <span class="n">code</span><span class="p">)</span> <span class="p">[</span><span class="n">XX</span><span class="p">]:</span><span class="n">TH</span>
 <span class="n">State</span> <span class="ow">or</span> <span class="n">Province</span> <span class="n">Name</span> <span class="p">(</span><span class="n">full</span> <span class="n">name</span><span class="p">)</span> <span class="p">[]:</span><span class="n">Bangkok</span>
@@ -455,7 +461,7 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 <span class="n">Common</span> <span class="n">Name</span> <span class="p">(</span><span class="n">eg</span><span class="p">,</span> <span class="n">your</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">your</span> <span class="n">server</span><span class="s1">&#39;s hostname) []:controller.example.com</span>
 <span class="n">Email</span> <span class="n">Address</span> <span class="p">[]:</span><span class="n">admin</span><span class="nd">@example</span><span class="o">.</span><span class="n">com</span>
 
-<span class="n">mv</span> <span class="n">certificate</span><span class="o">.</span><span class="n">key</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pki</span><span class="o">/</span><span class="n">tls</span><span class="o">/</span><span class="n">private</span><span class="o">/</span><span class="n">selfkey</span><span class="o">.</span><span class="n">key</span>
+<span class="n">mv</span> <span class="n">selfkey</span><span class="o">.</span><span class="n">key</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pki</span><span class="o">/</span><span class="n">tls</span><span class="o">/</span><span class="n">private</span><span class="o">/</span><span class="n">selfkey</span><span class="o">.</span><span class="n">key</span>
 <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="n">packstackca</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span>
 <span class="n">cp</span> <span class="n">ssl_vnc</span><span class="o">.</span><span class="n">crt</span>  <span class="o">~/</span><span class="n">packstackca</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="n">ssl_vnc</span><span class="o">.</span><span class="n">crt</span>
 
