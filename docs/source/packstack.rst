@@ -429,10 +429,18 @@ openvswitch::
       ovs_version: "2.5.0"
 
 
-Task 1 upload image
-===================
+Task 1 upload image to openstack
+================================
+Glance Service จะทำหน้าที่รับผิดชอบสำหรับการ upload image โดย default จะเก็บไว้ใน file system
+``/var/lib
+
 * Log in ด้วย keystonerc_admin
 * Download image cirros image และ centos 7
+* ชุดคำสั่ง glance และ ชุดคำสั่งใหม่คือ openstack
+
+Cli Glance
+----------
+เป็นคำสั่งเดิมที่มา แต่ version  นี้ก็ยังสามารถใช้งานได้ แต่แนะนำให้เรียนรู้คำสั่งใหม่ไปควบคู่กัน
 (packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)
 ::
 
@@ -470,3 +478,38 @@ Task 1 upload image
 ทดสอบอีกครั้งแต่คราวนี้ download centos7 image และใช้คำสั่ง ต่อเนื่องกัน ระหว่าง curl | glance::
 
 	curl http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2 | glance image-create --name='centos7 image' --visibility=public --container-format=bare --disk-format=qcow2
+
+Cli Openstack
+-------------
+คำสั่ง ``openstack image`` ใช้สำหรับการบริหารจัดการ glance server ใช้แทนชุดคำสั่ง ``glance``เดิม
+ที่มีใช้มาก่อน ::
+
+  openstack image
+  openstack: 'image' is not an openstack command. See 'openstack --help'.
+  Did you mean one of these?
+    image add project
+    image create
+    image delete
+    image list
+    image remove project
+    image save
+    image set
+    image show
+    usage list
+    usage show
+
+Example of Openstack image
+--------------------------
+::
+
+  openstack image list
+  +--------------------------------------+--------------+--------+
+  | ID                                   | Name         | Status |
+  +--------------------------------------+--------------+--------+
+  | 73c8577f-767c-497f-88fd-3e77ead3bae9 | cirros image | active |
+  +--------------------------------------+--------------+--------+openstack image list
+  +--------------------------------------+--------------+--------+
+  | ID                                   | Name         | Status |
+  +--------------------------------------+--------------+--------+
+  | 73c8577f-767c-497f-88fd-3e77ead3bae9 | cirros image | active |
+  +--------------------------------------+--------------+--------+

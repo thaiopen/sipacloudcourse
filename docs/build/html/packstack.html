@@ -98,7 +98,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#openvswitch-interface">Openvswitch Interface</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#task-1-upload-image">Task 1 upload image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#task-1-upload-image-to-openstack">Task 1 upload image to openstack</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cli-glance">Cli Glance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cli-openstack">Cli Openstack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-of-openstack-image">Example of Openstack image</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -636,13 +641,19 @@ openvswitch:</p>
 </div>
 </div>
 </div>
-<div class="section" id="task-1-upload-image">
-<h3>Task 1 upload image<a class="headerlink" href="#task-1-upload-image" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="task-1-upload-image-to-openstack">
+<h3>Task 1 upload image to openstack<a class="headerlink" href="#task-1-upload-image-to-openstack" title="Permalink to this headline">¶</a></h3>
+<p>Glance Service จะทำหน้าที่รับผิดชอบสำหรับการ upload image โดย default จะเก็บไว้ใน file system
+<a href="#id1"><span class="problematic" id="id2">``</span></a>/var/lib</p>
 <ul class="simple">
 <li>Log in ด้วย keystonerc_admin</li>
 <li>Download image cirros image และ centos 7</li>
+<li>ชุดคำสั่ง glance และ ชุดคำสั่งใหม่คือ openstack</li>
 </ul>
-<p>(packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)</p>
+<div class="section" id="cli-glance">
+<h4>Cli Glance<a class="headerlink" href="#cli-glance" title="Permalink to this headline">¶</a></h4>
+<p>เป็นคำสั่งเดิมที่มา แต่ version  นี้ก็ยังสามารถใช้งานได้ แต่แนะนำให้เรียนรู้คำสั่งใหม่ไปควบคู่กัน
+(packstack จะสร้าง ไฟล์ keystonerc_admin ใช้สำหรับการ login ทาง commandline)</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~</span>
 <span class="n">source</span> <span class="n">keystonerc_admin</span>
 <span class="c1">## prompt change ##</span>
@@ -677,6 +688,43 @@ openvswitch:</p>
 <p>ทดสอบอีกครั้งแต่คราวนี้ download centos7 image และใช้คำสั่ง ต่อเนื่องกัน ระหว่าง curl | glance:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">cloud</span><span class="o">.</span><span class="n">centos</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">centos</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mf">1606.</span><span class="n">qcow2</span> <span class="o">|</span> <span class="n">glance</span> <span class="n">image</span><span class="o">-</span><span class="n">create</span> <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;centos7 image&#39;</span> <span class="o">--</span><span class="n">visibility</span><span class="o">=</span><span class="n">public</span> <span class="o">--</span><span class="n">container</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">bare</span> <span class="o">--</span><span class="n">disk</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">qcow2</span>
 </pre></div>
+</div>
+</div>
+<div class="section" id="cli-openstack">
+<h4>Cli Openstack<a class="headerlink" href="#cli-openstack" title="Permalink to this headline">¶</a></h4>
+<p>คำสั่ง <code class="docutils literal"><span class="pre">openstack</span> <span class="pre">image</span></code> ใช้สำหรับการบริหารจัดการ glance server ใช้แทนชุดคำสั่ง <a href="#id3"><span class="problematic" id="id4">``</span></a>glance``เดิม
+ที่มีใช้มาก่อน</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>openstack image
+openstack: &#39;image&#39; is not an openstack command. See &#39;openstack --help&#39;.
+Did you mean one of these?
+  image add project
+  image create
+  image delete
+  image list
+  image remove project
+  image save
+  image set
+  image show
+  usage list
+  usage show
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-of-openstack-image">
+<h4>Example of Openstack image<a class="headerlink" href="#example-of-openstack-image" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">openstack</span> <span class="n">image</span> <span class="nb">list</span>
+<span class="o">+--------------------------------------+--------------+--------+</span>
+<span class="o">|</span> <span class="n">ID</span>                                   <span class="o">|</span> <span class="n">Name</span>         <span class="o">|</span> <span class="n">Status</span> <span class="o">|</span>
+<span class="o">+--------------------------------------+--------------+--------+</span>
+<span class="o">|</span> <span class="mi">73</span><span class="n">c8577f</span><span class="o">-</span><span class="mi">767</span><span class="n">c</span><span class="o">-</span><span class="mi">497</span><span class="n">f</span><span class="o">-</span><span class="mi">88</span><span class="n">fd</span><span class="o">-</span><span class="mi">3</span><span class="n">e77ead3bae9</span> <span class="o">|</span> <span class="n">cirros</span> <span class="n">image</span> <span class="o">|</span> <span class="n">active</span> <span class="o">|</span>
+<span class="o">+--------------------------------------+--------------+--------+</span><span class="n">openstack</span> <span class="n">image</span> <span class="nb">list</span>
+<span class="o">+--------------------------------------+--------------+--------+</span>
+<span class="o">|</span> <span class="n">ID</span>                                   <span class="o">|</span> <span class="n">Name</span>         <span class="o">|</span> <span class="n">Status</span> <span class="o">|</span>
+<span class="o">+--------------------------------------+--------------+--------+</span>
+<span class="o">|</span> <span class="mi">73</span><span class="n">c8577f</span><span class="o">-</span><span class="mi">767</span><span class="n">c</span><span class="o">-</span><span class="mi">497</span><span class="n">f</span><span class="o">-</span><span class="mi">88</span><span class="n">fd</span><span class="o">-</span><span class="mi">3</span><span class="n">e77ead3bae9</span> <span class="o">|</span> <span class="n">cirros</span> <span class="n">image</span> <span class="o">|</span> <span class="n">active</span> <span class="o">|</span>
+<span class="o">+--------------------------------------+--------------+--------+</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
