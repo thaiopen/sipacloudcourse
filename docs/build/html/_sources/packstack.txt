@@ -161,7 +161,7 @@ Edit Packstack Config
     crudini --set $answerfile general CONFIG_NEUTRON_ML2_VLAN_RANGES physnet2:1:1000
 
     crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS ext-net:br-ex,physnet2:br-eth2
-    crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_IFACES br-ex:eth0,br-eth2:eth2
+    crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_IFACES br-ex:eth0,br-eth2:eth2,br-tun:eth3
 
     crudini --set $answerfile general CONFIG_HEAT_INSTALL y
     crudini --set $answerfile general CONFIG_TROVE_INSTALL y
@@ -479,6 +479,27 @@ Cli Glance
 
 	curl http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2 | glance image-create --name='centos7 image' --visibility=public --container-format=bare --disk-format=qcow2
 
+  +------------------+--------------------------------------+
+  | Property         | Value                                |
+  +------------------+--------------------------------------+
+  | checksum         | 5dbbe9649d1d9a208ce34a7a70a69320     |
+  | container_format | bare                                 |
+  | created_at       | 2016-07-22T15:11:46Z                 |
+  | disk_format      | qcow2                                |
+  | id               | af2419ce-f869-4684-9940-eb619ac4e99b |
+  | min_disk         | 0                                    |
+  | min_ram          | 0                                    |
+  | name             | centos7 image                        |
+  | owner            | cb1d456312e240a4af43dabe7c9927c9     |
+  | protected        | False                                |
+  | size             | 915275776                            |
+  | status           | active                               |
+  | tags             | []                                   |
+  | updated_at       | 2016-07-22T16:25:30Z                 |
+  | virtual_size     | None                                 |
+  | visibility       | public                               |
+  +------------------+--------------------------------------+
+
 Cli Openstack
 -------------
 คำสั่ง ``openstack image`` ใช้สำหรับการบริหารจัดการ glance server ใช้แทนชุดคำสั่ง ``glance``เดิม
@@ -503,13 +524,28 @@ Example of Openstack image
 ::
 
   openstack image list
-  +--------------------------------------+--------------+--------+
-  | ID                                   | Name         | Status |
-  +--------------------------------------+--------------+--------+
-  | 73c8577f-767c-497f-88fd-3e77ead3bae9 | cirros image | active |
-  +--------------------------------------+--------------+--------+openstack image list
-  +--------------------------------------+--------------+--------+
-  | ID                                   | Name         | Status |
-  +--------------------------------------+--------------+--------+
-  | 73c8577f-767c-497f-88fd-3e77ead3bae9 | cirros image | active |
-  +--------------------------------------+--------------+--------+
+  +--------------------------------------+---------------+--------+
+  | ID                                   | Name          | Status |
+  +--------------------------------------+---------------+--------+
+  | af2419ce-f869-4684-9940-eb619ac4e99b | centos7 image | active |
+  | 73c8577f-767c-497f-88fd-3e77ead3bae9 | cirros image  | active |
+  +--------------------------------------+---------------+--------+
+
+
+
+
+
+
+Adding Compute node
+===================
+compute มี ip 10.0.0.11 ดังนั้นให้เพิ่ม ip ของ compute ไปยัง ค่า ``CONFIG_COMPUTE_HOSTS``
+พร้อมกับต้องเพิ่ม ip  10.0.0.10 ใน ``EXCLUDE_SERVERS``
+::
+
+  ssh-copy-id root@10.0.0.11
+  crudini --set  answer-Jul-22-16.txt general CONFIG_COMPUTE_HOSTS 10.0.0.10,10.0.0.11
+  crudini --set  answer-Jul-22-16.txt general EXCLUDE_SERVERS 10.0.0.10
+  crudini --set  answer-Jul-22-16.txt general CONFIG_NOVA_COMPUTE_PRIVIF eth2
+  crudini --set  answer-Jul-22-16.txt general CONFIG_NOVA_NETWORK_PRIVIF eth2
+
+  packstack --answer-file answer-Jul-22-16.txt

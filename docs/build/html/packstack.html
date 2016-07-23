@@ -104,6 +104,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-openstack-image">Example of Openstack image</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-compute-node">Adding Compute node</a></li>
 </ul>
 </li>
 </ul>
@@ -380,7 +381,7 @@ crudini --set $answerfile general CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES local,
 crudini --set $answerfile general CONFIG_NEUTRON_ML2_VLAN_RANGES physnet2:1:1000
 
 crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS ext-net:br-ex,physnet2:br-eth2
-crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_IFACES br-ex:eth0,br-eth2:eth2
+crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_IFACES br-ex:eth0,br-eth2:eth2,br-tun:eth3
 
 crudini --set $answerfile general CONFIG_HEAT_INSTALL y
 crudini --set $answerfile general CONFIG_TROVE_INSTALL y
@@ -686,7 +687,28 @@ openvswitch:</p>
 </pre></div>
 </div>
 <p>ทดสอบอีกครั้งแต่คราวนี้ download centos7 image และใช้คำสั่ง ต่อเนื่องกัน ระหว่าง curl | glance:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">cloud</span><span class="o">.</span><span class="n">centos</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">centos</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mf">1606.</span><span class="n">qcow2</span> <span class="o">|</span> <span class="n">glance</span> <span class="n">image</span><span class="o">-</span><span class="n">create</span> <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;centos7 image&#39;</span> <span class="o">--</span><span class="n">visibility</span><span class="o">=</span><span class="n">public</span> <span class="o">--</span><span class="n">container</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">bare</span> <span class="o">--</span><span class="n">disk</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">qcow2</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">cloud</span><span class="o">.</span><span class="n">centos</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">centos</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mf">1606.</span><span class="n">qcow2</span> <span class="o">|</span> <span class="n">glance</span> <span class="n">image</span><span class="o">-</span><span class="n">create</span> <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;centos7 image&#39;</span> <span class="o">--</span><span class="n">visibility</span><span class="o">=</span><span class="n">public</span> <span class="o">--</span><span class="n">container</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">bare</span> <span class="o">--</span><span class="n">disk</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">qcow2</span>
+
+<span class="o">+------------------+--------------------------------------+</span>
+<span class="o">|</span> <span class="n">Property</span>         <span class="o">|</span> <span class="n">Value</span>                                <span class="o">|</span>
+<span class="o">+------------------+--------------------------------------+</span>
+<span class="o">|</span> <span class="n">checksum</span>         <span class="o">|</span> <span class="mi">5</span><span class="n">dbbe9649d1d9a208ce34a7a70a69320</span>     <span class="o">|</span>
+<span class="o">|</span> <span class="n">container_format</span> <span class="o">|</span> <span class="n">bare</span>                                 <span class="o">|</span>
+<span class="o">|</span> <span class="n">created_at</span>       <span class="o">|</span> <span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">22</span><span class="n">T15</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">46</span><span class="n">Z</span>                 <span class="o">|</span>
+<span class="o">|</span> <span class="n">disk_format</span>      <span class="o">|</span> <span class="n">qcow2</span>                                <span class="o">|</span>
+<span class="o">|</span> <span class="nb">id</span>               <span class="o">|</span> <span class="n">af2419ce</span><span class="o">-</span><span class="n">f869</span><span class="o">-</span><span class="mi">4684</span><span class="o">-</span><span class="mi">9940</span><span class="o">-</span><span class="n">eb619ac4e99b</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">min_disk</span>         <span class="o">|</span> <span class="mi">0</span>                                    <span class="o">|</span>
+<span class="o">|</span> <span class="n">min_ram</span>          <span class="o">|</span> <span class="mi">0</span>                                    <span class="o">|</span>
+<span class="o">|</span> <span class="n">name</span>             <span class="o">|</span> <span class="n">centos7</span> <span class="n">image</span>                        <span class="o">|</span>
+<span class="o">|</span> <span class="n">owner</span>            <span class="o">|</span> <span class="n">cb1d456312e240a4af43dabe7c9927c9</span>     <span class="o">|</span>
+<span class="o">|</span> <span class="n">protected</span>        <span class="o">|</span> <span class="kc">False</span>                                <span class="o">|</span>
+<span class="o">|</span> <span class="n">size</span>             <span class="o">|</span> <span class="mi">915275776</span>                            <span class="o">|</span>
+<span class="o">|</span> <span class="n">status</span>           <span class="o">|</span> <span class="n">active</span>                               <span class="o">|</span>
+<span class="o">|</span> <span class="n">tags</span>             <span class="o">|</span> <span class="p">[]</span>                                   <span class="o">|</span>
+<span class="o">|</span> <span class="n">updated_at</span>       <span class="o">|</span> <span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">22</span><span class="n">T16</span><span class="p">:</span><span class="mi">25</span><span class="p">:</span><span class="mi">30</span><span class="n">Z</span>                 <span class="o">|</span>
+<span class="o">|</span> <span class="n">virtual_size</span>     <span class="o">|</span> <span class="kc">None</span>                                 <span class="o">|</span>
+<span class="o">|</span> <span class="n">visibility</span>       <span class="o">|</span> <span class="n">public</span>                               <span class="o">|</span>
+<span class="o">+------------------+--------------------------------------+</span>
 </pre></div>
 </div>
 </div>
@@ -713,18 +735,28 @@ Did you mean one of these?
 <div class="section" id="example-of-openstack-image">
 <h4>Example of Openstack image<a class="headerlink" href="#example-of-openstack-image" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">openstack</span> <span class="n">image</span> <span class="nb">list</span>
-<span class="o">+--------------------------------------+--------------+--------+</span>
-<span class="o">|</span> <span class="n">ID</span>                                   <span class="o">|</span> <span class="n">Name</span>         <span class="o">|</span> <span class="n">Status</span> <span class="o">|</span>
-<span class="o">+--------------------------------------+--------------+--------+</span>
-<span class="o">|</span> <span class="mi">73</span><span class="n">c8577f</span><span class="o">-</span><span class="mi">767</span><span class="n">c</span><span class="o">-</span><span class="mi">497</span><span class="n">f</span><span class="o">-</span><span class="mi">88</span><span class="n">fd</span><span class="o">-</span><span class="mi">3</span><span class="n">e77ead3bae9</span> <span class="o">|</span> <span class="n">cirros</span> <span class="n">image</span> <span class="o">|</span> <span class="n">active</span> <span class="o">|</span>
-<span class="o">+--------------------------------------+--------------+--------+</span><span class="n">openstack</span> <span class="n">image</span> <span class="nb">list</span>
-<span class="o">+--------------------------------------+--------------+--------+</span>
-<span class="o">|</span> <span class="n">ID</span>                                   <span class="o">|</span> <span class="n">Name</span>         <span class="o">|</span> <span class="n">Status</span> <span class="o">|</span>
-<span class="o">+--------------------------------------+--------------+--------+</span>
-<span class="o">|</span> <span class="mi">73</span><span class="n">c8577f</span><span class="o">-</span><span class="mi">767</span><span class="n">c</span><span class="o">-</span><span class="mi">497</span><span class="n">f</span><span class="o">-</span><span class="mi">88</span><span class="n">fd</span><span class="o">-</span><span class="mi">3</span><span class="n">e77ead3bae9</span> <span class="o">|</span> <span class="n">cirros</span> <span class="n">image</span> <span class="o">|</span> <span class="n">active</span> <span class="o">|</span>
-<span class="o">+--------------------------------------+--------------+--------+</span>
+<span class="o">+--------------------------------------+---------------+--------+</span>
+<span class="o">|</span> <span class="n">ID</span>                                   <span class="o">|</span> <span class="n">Name</span>          <span class="o">|</span> <span class="n">Status</span> <span class="o">|</span>
+<span class="o">+--------------------------------------+---------------+--------+</span>
+<span class="o">|</span> <span class="n">af2419ce</span><span class="o">-</span><span class="n">f869</span><span class="o">-</span><span class="mi">4684</span><span class="o">-</span><span class="mi">9940</span><span class="o">-</span><span class="n">eb619ac4e99b</span> <span class="o">|</span> <span class="n">centos7</span> <span class="n">image</span> <span class="o">|</span> <span class="n">active</span> <span class="o">|</span>
+<span class="o">|</span> <span class="mi">73</span><span class="n">c8577f</span><span class="o">-</span><span class="mi">767</span><span class="n">c</span><span class="o">-</span><span class="mi">497</span><span class="n">f</span><span class="o">-</span><span class="mi">88</span><span class="n">fd</span><span class="o">-</span><span class="mi">3</span><span class="n">e77ead3bae9</span> <span class="o">|</span> <span class="n">cirros</span> <span class="n">image</span>  <span class="o">|</span> <span class="n">active</span> <span class="o">|</span>
+<span class="o">+--------------------------------------+---------------+--------+</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="section" id="adding-compute-node">
+<h3>Adding Compute node<a class="headerlink" href="#adding-compute-node" title="Permalink to this headline">¶</a></h3>
+<p>compute มี ip 10.0.0.11 ดังนั้นให้เพิ่ม ip ของ compute ไปยัง ค่า <code class="docutils literal"><span class="pre">CONFIG_COMPUTE_HOSTS</span></code>
+พร้อมกับต้องเพิ่ม ip  10.0.0.10 ใน <code class="docutils literal"><span class="pre">EXCLUDE_SERVERS</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ssh</span><span class="o">-</span><span class="n">copy</span><span class="o">-</span><span class="nb">id</span> <span class="n">root</span><span class="nd">@10</span><span class="o">.</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">11</span>
+<span class="n">crudini</span> <span class="o">--</span><span class="nb">set</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span> <span class="n">general</span> <span class="n">CONFIG_COMPUTE_HOSTS</span> <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="p">,</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.11</span>
+<span class="n">crudini</span> <span class="o">--</span><span class="nb">set</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span> <span class="n">general</span> <span class="n">EXCLUDE_SERVERS</span> <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span>
+<span class="n">crudini</span> <span class="o">--</span><span class="nb">set</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span> <span class="n">general</span> <span class="n">CONFIG_NOVA_COMPUTE_PRIVIF</span> <span class="n">eth2</span>
+<span class="n">crudini</span> <span class="o">--</span><span class="nb">set</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span> <span class="n">general</span> <span class="n">CONFIG_NOVA_NETWORK_PRIVIF</span> <span class="n">eth2</span>
+
+<span class="n">packstack</span> <span class="o">--</span><span class="n">answer</span><span class="o">-</span><span class="n">file</span> <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
+</pre></div>
 </div>
 </div>
 </div>
