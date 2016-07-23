@@ -275,7 +275,7 @@ Run
     ## run again
     packstack --answer-file answer-Jul-21-16.txt
 
-.. image:: _images/openstack-two-machine-two-nic.png
+
 
 
 ผลการ Run
