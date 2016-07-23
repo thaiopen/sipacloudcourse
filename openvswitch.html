@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Understand Linux Bridge &amp; Openvswitch &mdash; SipaCloudCourse lastest documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="SipaCloudCourse lastest documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SipaCloudCourse
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                lastest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="buildinfra.html">Build Infrastructure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devstack.html">Openstack With DevStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="packstack.html">Openstack with Packstack</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SipaCloudCourse</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Understand Linux Bridge &amp; Openvswitch</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/openvswitch.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="understand-linux-bridge-openvswitch">
+<h1>Understand Linux Bridge &amp; Openvswitch<a class="headerlink" href="#understand-linux-bridge-openvswitch" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="openvswitch">
+<h2>Openvswitch<a class="headerlink" href="#openvswitch" title="Permalink to this headline">¶</a></h2>
+<p>openstack จะมี bridge อยู่ 2 ชนิด คือ bridge ที่สร้าง linux bridge และ bridge ที่สร้างจาก openvswitch
+โดย linux bridge ทำหน้าเป็น network l2 broadcast domain ให้ แก่ vm มาเกาะ และ linux bridge
+ก็จะไปเชื่อมต่อกับ br-int ที่สร้างโดย openvswitch</p>
+<div class="section" id="openvswitch-install">
+<h3>Openvswitch Install<a class="headerlink" href="#openvswitch-install" title="Permalink to this headline">¶</a></h3>
+<p>1). prepare vagrant:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">openvswitch</span>
+<span class="n">vagrant</span> <span class="n">init</span> <span class="n">centos</span><span class="o">/</span><span class="mi">7</span>
+<span class="n">vagrant</span> <span class="n">up</span>
+<span class="n">vagrant</span> <span class="n">ssh</span>
+<span class="n">sudu</span> <span class="n">su</span> <span class="o">-</span>
+</pre></div>
+</div>
+<p>2). Install requisite packages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">wget</span> <span class="n">gcc</span> <span class="n">make</span> <span class="n">python</span><span class="o">-</span><span class="n">devel</span> <span class="n">openssl</span><span class="o">-</span><span class="n">devel</span> <span class="n">kernel</span><span class="o">-</span><span class="n">devel</span> <span class="n">graphviz</span> <span class="n">kernel</span><span class="o">-</span><span class="n">debug</span><span class="o">-</span><span class="n">devel</span> <span class="n">autoconf</span> <span class="n">automake</span> <span class="n">rpm</span><span class="o">-</span><span class="n">build</span> <span class="n">redhat</span><span class="o">-</span><span class="n">rpm</span><span class="o">-</span><span class="n">config</span> <span class="n">libtool</span>
+<span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="n">rpmbuild</span><span class="o">/</span><span class="n">SOURCES</span>
+<span class="n">wget</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">openvswitch</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">openvswitch</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mf">0.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">tar</span> <span class="n">xvf</span> <span class="n">openvswitch</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mf">0.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">cd</span> <span class="n">openvswitch</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>3). Build RPM package:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ls</span>
+<span class="n">openvswitch</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span>  <span class="n">openvswitch</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mf">0.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+
+<span class="n">rpmbuild</span> <span class="o">-</span><span class="n">bb</span> <span class="o">--</span><span class="n">nocheck</span> <span class="n">openvswitch</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">rhel</span><span class="o">/</span><span class="n">openvswitch</span><span class="o">.</span><span class="n">spec</span>
+<span class="n">ls</span> <span class="o">~/</span><span class="n">rpmbuild</span><span class="o">/</span><span class="n">RPMS</span><span class="o">/</span><span class="n">x86_64</span><span class="o">/</span>
+
+<span class="n">openvswitch</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mf">1.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">rpm</span>  <span class="n">openvswitch</span><span class="o">-</span><span class="n">debuginfo</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mf">1.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">rpm</span>
+
+<span class="n">yum</span> <span class="n">localinstall</span> <span class="o">~/</span><span class="n">rpmbuild</span><span class="o">/</span><span class="n">RPMS</span><span class="o">/</span><span class="n">x86_64</span><span class="o">/</span><span class="n">openvswitch</span><span class="o">-</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mf">1.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">rpm</span>
+
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">openvswitch</span>
+<span class="n">systemctl</span> <span class="n">start</span> <span class="n">openvswitch</span>
+<span class="n">lsmod</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">openvswitch</span>
+
+<span class="n">openvswitch</span>            <span class="mi">84543</span>  <span class="mi">0</span>
+<span class="n">libcrc32c</span>              <span class="mi">12644</span>  <span class="mi">1</span> <span class="n">openvswitch</span>
+</pre></div>
+</div>
+<p>4). Test OVS:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="o">-</span><span class="n">V</span>
+<span class="c1">##</span>
+<span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="p">(</span><span class="n">Open</span> <span class="n">vSwitch</span><span class="p">)</span> <span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">Compiled</span> <span class="n">Jul</span> <span class="mi">23</span> <span class="mi">2016</span> <span class="mi">06</span><span class="p">:</span><span class="mi">50</span><span class="p">:</span><span class="mi">04</span>
+<span class="n">DB</span> <span class="n">Schema</span> <span class="mf">7.12</span><span class="o">.</span><span class="mi">1</span>
+
+<span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="n">show</span>
+<span class="c1">##</span>
+<span class="mi">7369</span><span class="n">b72b</span><span class="o">-</span><span class="mi">22</span><span class="n">a1</span><span class="o">-</span><span class="mi">4</span><span class="n">d0a</span><span class="o">-</span><span class="n">b747</span><span class="o">-</span><span class="mi">0</span><span class="n">ca20f3b55ec</span>
+    <span class="n">ovs_version</span><span class="p">:</span> <span class="s2">&quot;2.5.0&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, sawangpong muadphet &lt;sawangpong@itbakery.net&gt;.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'lastest',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

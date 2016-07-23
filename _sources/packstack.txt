@@ -161,7 +161,7 @@ Edit Packstack Config
     crudini --set $answerfile general CONFIG_NEUTRON_ML2_VLAN_RANGES physnet2:1:1000
 
     crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS ext-net:br-ex,physnet2:br-eth2
-    crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_IFACES br-ex:eth0,br-eth2:eth2,br-tun:eth3
+    crudini --set $answerfile general CONFIG_NEUTRON_OVS_BRIDGE_IFACES br-ex:eth0,br-eth2:eth2
 
     crudini --set $answerfile general CONFIG_HEAT_INSTALL y
     crudini --set $answerfile general CONFIG_TROVE_INSTALL y
