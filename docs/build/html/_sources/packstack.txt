@@ -549,3 +549,4 @@ compute มี ip 10.0.0.11 ดังนั้นให้เพิ่ม ip ข
   crudini --set  answer-Jul-22-16.txt general CONFIG_NOVA_NETWORK_PRIVIF eth2
 
   packstack --answer-file answer-Jul-22-16.txt
+  sudo systemctl enable openvswitch mariadb rabbitmq-server
