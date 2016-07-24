@@ -209,9 +209,11 @@ Compute Menu
 
 .. note::
 
-  เมื่อเสร็จแล้วต้องการ สิ้นสุด ให้ ``./unstack.sh`` ทุกครั้ง แล้วค่อย stack.sh ใหม่ ::
+  เมื่อเสร็จแล้วต้องการ สิ้นสุด ให้ ``./unstack.sh`` ทุกครั้ง แล้วค่อย stack.sh ใหม่
 
-  Ctrl a d
+::
+
+  Ctrl a d      (exit from screen session)
   ./unstack.sh
 
 
