@@ -37,6 +37,10 @@ file Vagrant จากตัวอย่างด้านบน
   ## ssh to vagrant
   vagrant ssh devstack
 
+  ## check vm support virtualization
+  egrep -c '(vmx|svm)' /proc/cpuinfo
+  2
+
   ## change to root
   sudo su -
   useradd -d /opt/stack stack
