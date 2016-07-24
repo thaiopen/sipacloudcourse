@@ -2,8 +2,9 @@
 Openstack With DevStack
 =======================
 
+*********************
 Devstack with Vagrant
-=====================
+*********************
 file vagrant สำหรับการทดสอบ devstack
 
 .. literalinclude::  _source/Vagrantfile2
@@ -11,7 +12,7 @@ file vagrant สำหรับการทดสอบ devstack
 Download complete file :download:`Vagrantfile2 <./_source/Vagrantfile2>`::
 
 Install Devstack
-****************
+================
 
 หลังจาก ที่เราได้ทำการ vagrant up server1 เรียบร้อยแล้ว vm นี้มีขนาด RAM  8 Gb เพื่อใช้การทดสอบ
 openstack ทดสอบโดยการสร้าง Directory สำหรับการทดสอบ ``Devstack`` และ ให้ Download หรือ สร้าง
@@ -24,7 +25,7 @@ file Vagrant จากตัวอย่างด้านบน
   mv Vagrantfile2 Vagrantfile
 
   ## ssh to vagrant
-  vagrant ssh server1
+  vagrant ssh devstack
 
   ## change to root
   sudo su -
@@ -85,7 +86,7 @@ login ด้วย admin/password
 .. image:: _images/devstack02.png
 
 Manage Devstack
-***************
+===============
 ให้ทำการ enable service เนื่องจากอาจมีการ restart vm::
 
   sudo systemctl enable openvswitch mariadb rabbitmq-server
@@ -129,7 +130,7 @@ Manage Devstack
 
 
 Add Devstack plugin
-*******************
+===================
 สามารถทำได้ด้วยการ เพิ่มเติมค่าใน local.conf
 
 .. literalinclude::  _source/local.conf2
@@ -199,8 +200,19 @@ Compute Menu
   Ctrl a d
   ./unstack.sh
 
+
+Add Image
+=========
+::
+
+  source openrc
+  wget https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
+  qemu-img info trusty-server-cloudimg-amd64-disk1.img
+  glance image-create --name "ubuntu-trusty" --disk-format qcow2 --container-format bare --min-disk=3 --is-public True --is-protected True --file trusty-server-cloudimg-amd64-disk1.img --progress
+  glance image-list
+
 Neutron Network Default Settings
-********************************
+================================
 
 ค่า default ของ network ที่สร้างหลังจาก ที่ enable neutron โดยมี openswitch เป็นคนสร้างให้ เป็นค่า
 default เนื่องจากเราไม่ได้ปรับแต่ค่าตัวแปรใดๆใน local.conf ให้พิมพ์คำสั่ง openvswitch ``ovs-vsctl show``::
