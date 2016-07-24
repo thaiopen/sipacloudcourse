@@ -89,7 +89,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#install-devstack">Install Devstack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#manage-devstack">Manage Devstack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-devstack-plugin">Add Devstack plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#add-image">Add Image</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#neutron-network-default-settings">Neutron Network Default Settings</a></li>
 </ul>
 </li>
@@ -376,16 +375,6 @@ config ของ network ที่ devstack เตรียมไว้ให้
 <p>เมื่อเสร็จแล้วต้องการ สิ้นสุด ให้ <code class="docutils literal"><span class="pre">./unstack.sh</span></code> ทุกครั้ง แล้วค่อย stack.sh ใหม่</p>
 <p class="last">Ctrl a d
 ./unstack.sh</p>
-</div>
-</div>
-<div class="section" id="add-image">
-<h3>Add Image<a class="headerlink" href="#add-image" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">openrc</span>
-<span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">cloud</span><span class="o">-</span><span class="n">images</span><span class="o">.</span><span class="n">ubuntu</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">trusty</span><span class="o">/</span><span class="n">current</span><span class="o">/</span><span class="n">trusty</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">cloudimg</span><span class="o">-</span><span class="n">amd64</span><span class="o">-</span><span class="n">disk1</span><span class="o">.</span><span class="n">img</span>
-<span class="n">qemu</span><span class="o">-</span><span class="n">img</span> <span class="n">info</span> <span class="n">trusty</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">cloudimg</span><span class="o">-</span><span class="n">amd64</span><span class="o">-</span><span class="n">disk1</span><span class="o">.</span><span class="n">img</span>
-<span class="n">glance</span> <span class="n">image</span><span class="o">-</span><span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="s2">&quot;ubuntu-trusty&quot;</span> <span class="o">--</span><span class="n">disk</span><span class="o">-</span><span class="nb">format</span> <span class="n">qcow2</span> <span class="o">--</span><span class="n">container</span><span class="o">-</span><span class="nb">format</span> <span class="n">bare</span> <span class="o">--</span><span class="nb">min</span><span class="o">-</span><span class="n">disk</span><span class="o">=</span><span class="mi">3</span> <span class="o">--</span><span class="ow">is</span><span class="o">-</span><span class="n">public</span> <span class="kc">True</span> <span class="o">--</span><span class="ow">is</span><span class="o">-</span><span class="n">protected</span> <span class="kc">True</span> <span class="o">--</span><span class="n">file</span> <span class="n">trusty</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">cloudimg</span><span class="o">-</span><span class="n">amd64</span><span class="o">-</span><span class="n">disk1</span><span class="o">.</span><span class="n">img</span> <span class="o">--</span><span class="n">progress</span>
-<span class="n">glance</span> <span class="n">image</span><span class="o">-</span><span class="nb">list</span>
-</pre></div>
 </div>
 </div>
 <div class="section" id="neutron-network-default-settings">
