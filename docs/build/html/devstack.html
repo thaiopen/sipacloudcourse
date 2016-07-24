@@ -198,6 +198,10 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <span class="c1">## ssh to vagrant</span>
 <span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">devstack</span>
 
+<span class="c1">## check vm support virtualization</span>
+<span class="n">egrep</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;(vmx|svm)&#39;</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">cpuinfo</span>
+<span class="mi">2</span>
+
 <span class="c1">## change to root</span>
 <span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
 <span class="n">useradd</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">stack</span> <span class="n">stack</span>
