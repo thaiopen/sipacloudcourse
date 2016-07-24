@@ -201,15 +201,6 @@ Compute Menu
   ./unstack.sh
 
 
-Add Image
-=========
-::
-
-  source openrc
-  wget https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
-  qemu-img info trusty-server-cloudimg-amd64-disk1.img
-  glance image-create --name "ubuntu-trusty" --disk-format qcow2 --container-format bare --min-disk=3 --is-public True --is-protected True --file trusty-server-cloudimg-amd64-disk1.img --progress
-  glance image-list
 
 Neutron Network Default Settings
 ================================
