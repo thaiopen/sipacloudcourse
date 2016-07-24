@@ -11,6 +11,16 @@ file vagrant สำหรับการทดสอบ devstack
 
 Download complete file :download:`Vagrantfile2 <./_source/Vagrantfile2>`::
 
+เตรียมเครื่อง host ให้สนับสนุน nested kvm เนื่องจากเรากำลังสร้าง openstack ซ้อนใน VM ทำดังต่อไปนี้
+::
+
+  vi /etc/modprobe.d/kvm-nested.conf
+  options kvm_intel nested=1
+  modprobe -r kvm_intel
+  modprobe kvm_intel
+  reboot
+
+
 Install Devstack
 ================
 

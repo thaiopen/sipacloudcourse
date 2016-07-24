@@ -177,6 +177,14 @@
 </pre></div>
 </div>
 <p>Download complete file <a class="reference download internal" href="_downloads/Vagrantfile2" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile2</span></code></a>:</p>
+<p>เตรียมเครื่อง host ให้สนับสนุน nested kvm เนื่องจากเรากำลังสร้าง openstack ซ้อนใน VM ทำดังต่อไปนี้</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vi</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">modprobe</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">kvm</span><span class="o">-</span><span class="n">nested</span><span class="o">.</span><span class="n">conf</span>
+<span class="n">options</span> <span class="n">kvm_intel</span> <span class="n">nested</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">modprobe</span> <span class="o">-</span><span class="n">r</span> <span class="n">kvm_intel</span>
+<span class="n">modprobe</span> <span class="n">kvm_intel</span>
+<span class="n">reboot</span>
+</pre></div>
+</div>
 <div class="section" id="install-devstack">
 <h3>Install Devstack<a class="headerlink" href="#install-devstack" title="Permalink to this headline">¶</a></h3>
 <p>หลังจาก ที่เราได้ทำการ vagrant up server1 เรียบร้อยแล้ว vm นี้มีขนาด RAM  8 Gb เพื่อใช้การทดสอบ
