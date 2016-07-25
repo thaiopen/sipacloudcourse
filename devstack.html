@@ -86,7 +86,10 @@
 <li class="toctree-l1"><a class="reference internal" href="buildinfra.html">Build Infrastructure</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Openstack With DevStack</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#devstack-with-vagrant">Devstack with Vagrant</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#install-devstack">Install Devstack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-devstack">Install Devstack</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#error">Error</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#manage-devstack">Manage Devstack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-devstack-plugin">Add Devstack plugin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#neutron-network-default-settings">Neutron Network Default Settings</a></li>
@@ -209,7 +212,8 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <span class="n">exit</span>
 
 <span class="c1">## on normal vagrant user</span>
-<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">install</span> <span class="n">git</span>
+<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">update</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">install</span> <span class="n">git</span> <span class="o">-</span><span class="n">y</span>
 <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">dev</span><span class="o">/</span><span class="n">devstack</span>
 <span class="n">cd</span> <span class="n">devstack</span>
 <span class="c1">## create local.conf</span>
@@ -257,6 +261,24 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <img alt="_images/devstack01.png" src="_images/devstack01.png" />
 <p>login ด้วย admin/password</p>
 <img alt="_images/devstack02.png" src="_images/devstack02.png" />
+<div class="section" id="error">
+<h4>Error<a class="headerlink" href="#error" title="Permalink to this headline">¶</a></h4>
+<p>เมื่อทำการทดสอบ การสร้าง Instance จะเกิด error:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Error</span><span class="p">:</span> <span class="n">Failed</span> <span class="n">to</span> <span class="n">perform</span> <span class="n">requested</span> <span class="n">operation</span> <span class="n">on</span> <span class="n">instance</span> <span class="s2">&quot;testv&quot;</span><span class="p">,</span>
+<span class="n">the</span> <span class="n">instance</span> <span class="n">has</span> <span class="n">an</span> <span class="n">error</span> <span class="n">status</span><span class="p">:</span> <span class="n">Please</span> <span class="k">try</span> <span class="n">again</span> <span class="n">later</span>
+<span class="p">[</span><span class="n">Error</span><span class="p">:</span> <span class="n">No</span> <span class="n">valid</span> <span class="n">host</span> <span class="n">was</span> <span class="n">found</span><span class="o">.</span> <span class="n">There</span> <span class="n">are</span> <span class="ow">not</span> <span class="n">enough</span> <span class="n">hosts</span> <span class="n">available</span><span class="o">.</span><span class="p">]</span><span class="o">.</span>
+</pre></div>
+</div>
+<img alt="_images/devstack10.png" src="_images/devstack10.png" />
+<p>ให้ทำการแก้ไขด้วยการ เพิ่ม ค่าตัวแปรใน <code class="docutils literal"><span class="pre">/etc/nova/nova.conf</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nova</span><span class="o">/</span><span class="n">nova</span><span class="o">.</span><span class="n">conf</span>
+<span class="c1">## Add these two lines</span>
+<span class="n">ram_allocation_ratio</span><span class="o">=</span><span class="mi">2</span>
+<span class="n">cpu_allocation_ratio</span><span class="o">=</span><span class="mi">20</span>
+<span class="c1">## Default value here is 16</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="manage-devstack">
 <h3>Manage Devstack<a class="headerlink" href="#manage-devstack" title="Permalink to this headline">¶</a></h3>
