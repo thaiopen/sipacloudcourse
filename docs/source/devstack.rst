@@ -48,7 +48,8 @@ file Vagrant จากตัวอย่างด้านบน
   exit
 
   ## on normal vagrant user
-  sudo dnf install git
+  sudo dnf update -y
+  sudo dnf install git -y
   git clone https://git.openstack.org/openstack-dev/devstack
   cd devstack
   ## create local.conf
@@ -98,6 +99,26 @@ script ``stack.sh`` จะทำการ download source code จาก github 
 login ด้วย admin/password
 
 .. image:: _images/devstack02.png
+
+
+Error
+-----
+เมื่อทำการทดสอบ การสร้าง Instance จะเกิด error::
+
+  Error: Failed to perform requested operation on instance "testv",
+  the instance has an error status: Please try again later
+  [Error: No valid host was found. There are not enough hosts available.].
+
+.. image:: _images/devstack10.png
+
+ให้ทำการแก้ไขด้วยการ เพิ่ม ค่าตัวแปรใน ``/etc/nova/nova.conf``
+::
+
+  sudo vim /etc/nova/nova.conf
+  ## Add these two lines
+  ram_allocation_ratio=2
+  cpu_allocation_ratio=20
+  ## Default value here is 16
 
 Manage Devstack
 ===============
@@ -202,6 +223,9 @@ Heat Orchestration Menu
 Compute Menu
 
 .. image:: _images/devstack09.png
+
+
+
 
 .. note::
 
