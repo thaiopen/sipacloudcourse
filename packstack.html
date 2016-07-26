@@ -480,16 +480,20 @@ crudini --set $answerfile general CONFIG_CINDER_VOLUMES_CREATE n
 <span class="c1">## หากมี error แบบนี้</span>
 <span class="n">Preparing</span> <span class="n">Nova</span> <span class="n">VNC</span> <span class="n">Proxy</span> <span class="n">entries</span>                  <span class="p">[</span> <span class="n">ERROR</span> <span class="p">]</span>
 <span class="n">ERROR</span> <span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">2</span><span class="p">]</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span><span class="p">:</span> <span class="s1">&#39;~/packstackca/certs/10.0.0.10ssl_vnc.crt&#39;</span>
-
-<span class="c1">## Fix error เนื่องจาก ssl_vnc.crt</span>
-<span class="n">cp</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pki</span><span class="o">/</span><span class="n">tls</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span><span class="n">ssl_vnc</span><span class="o">.</span><span class="n">crt</span> <span class="o">~/</span><span class="n">packstackca</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="n">ssl_vnc</span><span class="o">.</span><span class="n">crt</span>
-
-<span class="c1">## แก้ไข ค่า  path ``~/packstackca/`` to ``/root/packstackca/`` จะอยู่ประมาณวันที่</span>
-<span class="c1">## 249 (ชื่อ answerfile ไฟล์อาจไม่เหมือนกัน ให้เปลี่ยนชือให้ตรงก่อน)</span>
+</pre></div>
+</div>
+<p>Fix error เนื่องจาก ssl_vnc.crt ที่สร้างขึ้นระหว่าง packstack จะไปสร้างใน directory
+/etc/pki/tls/certs/ ต้องย้ายมาเก็บไว้ใน ~/packstackca/ เนื่องจากได้กำหนดไว้ในค่าของ
+ตัวแปรที่ ชื่อว่า CONFIG_SSL_CERT_DIR</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">## Check config</span>
 <span class="n">grep</span> <span class="o">-</span><span class="ow">in</span>  <span class="n">packstackca</span> <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
 <span class="mi">249</span><span class="p">:</span><span class="n">CONFIG_SSL_CERT_DIR</span><span class="o">=~/</span><span class="n">packstackca</span><span class="o">/</span>
 
+<span class="c1">## change config of CONFIG_SSL_CERT_DIR</span>
 <span class="n">crudini</span> <span class="o">--</span><span class="nb">set</span>  <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span> <span class="n">general</span> <span class="n">CONFIG_SSL_CERT_DIR</span> <span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">packstackca</span><span class="o">/</span>
+
+<span class="c1">## copy</span>
+<span class="n">cp</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pki</span><span class="o">/</span><span class="n">tls</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span><span class="n">ssl_vnc</span><span class="o">.</span><span class="n">crt</span> <span class="o">~/</span><span class="n">packstackca</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.10</span><span class="n">ssl_vnc</span><span class="o">.</span><span class="n">crt</span>
 
 <span class="c1">## run again</span>
 <span class="n">packstack</span> <span class="o">--</span><span class="n">answer</span><span class="o">-</span><span class="n">file</span> <span class="n">answer</span><span class="o">-</span><span class="n">Jul</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mf">16.</span><span class="n">txt</span>
