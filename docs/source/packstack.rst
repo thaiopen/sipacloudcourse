@@ -263,15 +263,20 @@ Run
     Preparing Nova VNC Proxy entries                  [ ERROR ]
     ERROR : [Errno 2] No such file or directory: '~/packstackca/certs/10.0.0.10ssl_vnc.crt'
 
-    ## Fix error เนื่องจาก ssl_vnc.crt
-    cp /etc/pki/tls/certs/ssl_vnc.crt ~/packstackca/certs/10.0.0.10ssl_vnc.crt
+Fix error เนื่องจาก ssl_vnc.crt ที่สร้างขึ้นระหว่าง packstack จะไปสร้างใน directory
+/etc/pki/tls/certs/ ต้องย้ายมาเก็บไว้ใน ~/packstackca/ เนื่องจากได้กำหนดไว้ในค่าของ
+ตัวแปรที่ ชื่อว่า CONFIG_SSL_CERT_DIR
+::
 
-    ## แก้ไข ค่า  path ``~/packstackca/`` to ``/root/packstackca/`` จะอยู่ประมาณวันที่
-    ## 249 (ชื่อ answerfile ไฟล์อาจไม่เหมือนกัน ให้เปลี่ยนชือให้ตรงก่อน)
+    ## Check config
     grep -in  packstackca answer-Jul-22-16.txt
     249:CONFIG_SSL_CERT_DIR=~/packstackca/
 
+    ## change config of CONFIG_SSL_CERT_DIR
     crudini --set  answer-Jul-22-16.txt general CONFIG_SSL_CERT_DIR /root/packstackca/
+
+    ## copy
+    cp /etc/pki/tls/certs/ssl_vnc.crt ~/packstackca/certs/10.0.0.10ssl_vnc.crt
 
     ## run again
     packstack --answer-file answer-Jul-21-16.txt
