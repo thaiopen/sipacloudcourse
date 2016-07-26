@@ -252,21 +252,22 @@ Run
     Common Name (eg, your name or your server's hostname) []:controller.example.com
     Email Address []:admin@example.com
 
+    ## copy selfkey.key
     mv selfkey.key /etc/pki/tls/private/selfkey.key
     mkdir -p ~/packstackca/certs/
 
     cd ~
     packstack --answer-file answer-Jul-21-16.txt
 
-    ## จะมี error แบบนี้
+    ## หากมี error แบบนี้
     Preparing Nova VNC Proxy entries                  [ ERROR ]
     ERROR : [Errno 2] No such file or directory: '~/packstackca/certs/10.0.0.10ssl_vnc.crt'
 
-    ## copy key ``selfcert.crt`` from ``/etc/pki/tls/certs/`` to ``~/packstackca/certs/``
-    ls /etc/pki/tls/certs/
+    ## Fix error เนื่องจาก ssl_vnc.crt
     cp /etc/pki/tls/certs/ssl_vnc.crt ~/packstackca/certs/10.0.0.10ssl_vnc.crt
 
-    ## edit path ``~/packstackca/`` to ``/root/packstackca/``
+    ## แก้ไข ค่า  path ``~/packstackca/`` to ``/root/packstackca/`` จะอยู่ประมาณวันที่
+    ## 249 (ชื่อ answerfile ไฟล์อาจไม่เหมือนกัน ให้เปลี่ยนชือให้ตรงก่อน)
     grep -in  packstackca answer-Jul-22-16.txt
     249:CONFIG_SSL_CERT_DIR=~/packstackca/
 
