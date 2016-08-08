@@ -5,21 +5,15 @@ Openstack With DevStack
 *********************
 Devstack with Vagrant
 *********************
-file vagrant สำหรับการทดสอบ devstack
+ตัวอย่าง file vagrant สำหรับการทดสอบ devstack
 
 .. literalinclude::  _source/Vagrantfile2
 
 Download complete file :download:`Vagrantfile2 <./_source/Vagrantfile2>`::
 
-เตรียมเครื่อง host ให้สนับสนุน nested kvm เนื่องจากเรากำลังสร้าง openstack ซ้อนใน VM ทำดังต่อไปนี้
-::
+.. image:: _images/devstack-arch.png
 
-  vi /etc/modprobe.d/kvm-nested.conf
-  options kvm_intel nested=1
-  modprobe -r kvm_intel
-  modprobe kvm_intel
-  reboot
-
+from  http://docs.openstack.org/developer/devstack/guides/neutron.html
 
 Install Devstack
 ================
@@ -35,7 +29,11 @@ file Vagrant จากตัวอย่างด้านบน
   mv Vagrantfile2 Vagrantfile
 
   ## ssh to vagrant
-  vagrant ssh devstack
+  vagrant up
+  ## ssh to instance โดยการใช้ ชื่อที่กำหนดใน define
+  vagrant ssh devstack1
+  --or--
+  vagrant ssh devstack2
 
   ## check vm support virtualization
   egrep -c '(vmx|svm)' /proc/cpuinfo
@@ -52,16 +50,70 @@ file Vagrant จากตัวอย่างด้านบน
   sudo dnf install git -y
   git clone https://git.openstack.org/openstack-dev/devstack
   cd devstack
-  ## create local.conf
-  cat << LOCAL > local.conf
-  [[local|localrc]]
-  ADMIN_PASSWORD=password
-  DATABASE_PASSWORD=password
-  RABBIT_PASSWORD=password
-  SERVICE_PASSWORD=password
-  LOCAL
 
-  ## run stack.sh
+create local.conf
+-----------------
+การใช้งานการปรับแต่ง devstack จะขึ้นกับรายละเอียดที่ระบุไว้ใน local.conf::
+
+  [[local|localrc]]
+  ## ip config
+  HOST_IP=172.18.161.6
+  SERVICE_HOST=172.18.161.6
+  MYSQL_HOST=172.18.161.6
+  RABBIT_HOST=172.18.161.6
+  GLANCE_HOSTPORT=172.18.161.6:9292
+  ## password
+  ADMIN_PASSWORD=secret
+  DATABASE_PASSWORD=secret
+  RABBIT_PASSWORD=secret
+  SERVICE_PASSWORD=secret
+
+  ## Do not use Nova-Network
+  disable_service n-net
+  enable_plugin neutron https://git.openstack.org/openstack/neutron
+  ## Enable Neutron
+  ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-agt,q-l3,q-metering,q-qos
+
+  ## Neutron options
+  Q_USE_SECGROUP=True
+  FLOATING_RANGE="172.18.161.0/24"
+  FIXED_RANGE="10.0.0.0/24"
+  Q_FLOATING_ALLOCATION_POOL=start=172.18.161.250,end=172.18.161.254
+  PUBLIC_NETWORK_GATEWAY="172.18.161.1"
+  PUBLIC_INTERFACE=eth1
+
+  # Open vSwitch provider networking configuration
+  Q_USE_PROVIDERNET_FOR_PUBLIC=True
+  OVS_PHYSICAL_BRIDGE=br-ex
+  PUBLIC_BRIDGE=br-ex
+  OVS_BRIDGE_MAPPINGS=public:br-ex
+
+  # Enable VPN plugin for neutron
+  enable_plugin neutron-vpnaas https://git.openstack.org/openstack/neutron-vpnaas
+
+  # Enable Firewall plugin for neutron
+  enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
+
+  # Enable Load Balancer plugin for neutron
+  enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
+
+  # Enable Ceilometer (Metering)
+  enable_service ceilometer-acompute ceilometer-acentral ceilometer-anotification ceilometer-collector ceilometer-api
+  enable_plugin ceilometer https://git.openstack.org/openstack/ceilometer
+  enable_plugin aodh https://git.openstack.org/openstack/aodh
+
+  CEILOMETER_BACKEND=mongodb
+  CEILOMETER_NOTIFICATION_TOPICS=notifications,profiler
+
+  [[post-config|$GLANCE_API_CONF]]
+  [DEFAULT]
+  default_store=file
+
+  IMAGE_URLS+=",http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2"
+
+
+run stack.sh::
+
   ./stack.sh
 
 script ``stack.sh`` จะทำการ download source code จาก github และมาติดตั้งให้เองอัตโนมัติ

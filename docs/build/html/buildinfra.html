@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Build Infrastructure &mdash; SipaCloudCourse lastest documentation</title>
+  <title>Setup HOST Infrastructure &mdash; SipaCloudCourse lastest documentation</title>
   
 
   
@@ -83,15 +83,17 @@
             
             
                 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Build Infrastructure</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#vagrant">Vagrant</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#install-vagrant">Install vagrant</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#repository">repository</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#download-box">Download box</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#connect-to-vm">Connect to VM</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#file-system-synce">File System Synce</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setup HOST Infrastructure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#host-machine">HOST Machine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nested-kvm">Nested KVM</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#vagrant">Vagrant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-vagrant">Install vagrant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#repository">repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-box">Download box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connect-to-vm">Connect to VM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-system-synce">File System Synce</a></li>
 </ul>
 </li>
 </ul>
@@ -137,7 +139,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Build Infrastructure</li>
+      <li>Setup HOST Infrastructure</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -154,8 +156,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="build-infrastructure">
-<h1>Build Infrastructure<a class="headerlink" href="#build-infrastructure" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="setup-host-infrastructure">
+<h1>Setup HOST Infrastructure<a class="headerlink" href="#setup-host-infrastructure" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="host-machine">
+<h2>HOST Machine<a class="headerlink" href="#host-machine" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="nested-kvm">
+<h3>Nested KVM<a class="headerlink" href="#nested-kvm" title="Permalink to this headline">¶</a></h3>
+<p>เมื่อมีการใช้งาน kvm  เราสามารถตั้งค่าเพื่อให้สามารถใช้งาน kvm ซ้อน kvmได้ จะทำให้ instance ที่สร้าง
+มีประสิทธิภาพการใชงานเร็วกว่าการทำงานบน QEMU emulation โดย Linux kernel จะยังไม่เปิดใช้ความ
+สามารถนี้โดย default ต้องมีการตั้งค่า:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">su</span> <span class="o">-</span>
+<span class="n">rmmod</span> <span class="n">kvm</span><span class="o">-</span><span class="n">intel</span>
+<span class="n">echo</span> <span class="s1">&#39;options kvm-intel nested=y&#39;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">modprobe</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">dist</span><span class="o">.</span><span class="n">conf</span><span class="s2">&quot;</span>
+<span class="n">modprobe</span> <span class="n">kvm</span><span class="o">-</span><span class="n">intel</span>
+</pre></div>
+</div>
+<p>ตรวจสอบ kernel parameter:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">module</span><span class="o">/</span><span class="n">kvm_intel</span><span class="o">/</span><span class="n">parameters</span><span class="o">/</span><span class="n">nested</span>
+<span class="n">Y</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="vagrant">
 <h2>Vagrant<a class="headerlink" href="#vagrant" title="Permalink to this headline">¶</a></h2>
 <p>การใช้งาน vagrant เพื่อสร้าง development environment</p>
@@ -185,8 +207,9 @@
 <span class="n">vagrant</span> <span class="n">plugin</span> <span class="n">install</span> <span class="n">vagrant</span><span class="o">-</span><span class="n">scp</span>
 </pre></div>
 </div>
+</div>
 <div class="section" id="repository">
-<h4>repository<a class="headerlink" href="#repository" title="Permalink to this headline">¶</a></h4>
+<h3>repository<a class="headerlink" href="#repository" title="Permalink to this headline">¶</a></h3>
 <p>vagrant ได้เตรียม image ไว้มากมายเพื่อให้เราสามารถใช้งาน ได้ โดยสามารถค้นหาและdownload image
 เพื่อเตรียมทดสอบ <a class="reference external" href="https://atlas.hashicorp.com/boxes/search">https://atlas.hashicorp.com/boxes/search</a></p>
 <img alt="_images/vagrant002.png" src="_images/vagrant002.png" />
@@ -194,7 +217,7 @@
 <img alt="_images/vagrant003.png" src="_images/vagrant003.png" />
 </div>
 <div class="section" id="download-box">
-<h4>Download box<a class="headerlink" href="#download-box" title="Permalink to this headline">¶</a></h4>
+<h3>Download box<a class="headerlink" href="#download-box" title="Permalink to this headline">¶</a></h3>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">การสั่งคำสั่ง vagrant cli สามารถใช้งาน ใน user ปรกติไม่จำเป็น root โดย vagrant จะสร้าง directory
@@ -284,7 +307,7 @@ $ vagrant up --provider libvirt
 <img alt="_images/vagrant006.png" src="_images/vagrant006.png" />
 </div>
 <div class="section" id="connect-to-vm">
-<h4>Connect to VM<a class="headerlink" href="#connect-to-vm" title="Permalink to this headline">¶</a></h4>
+<h3>Connect to VM<a class="headerlink" href="#connect-to-vm" title="Permalink to this headline">¶</a></h3>
 <p>สามารถเชื่อมผ่าน vagrant ssh [ชื่อ server] โดยที่ชื่อ ของ Server จะเป็นค่าที่กำหนดแก่ <code class="docutils literal"><span class="pre">define</span></code></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">server1</span>
 <span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">server2</span>
@@ -292,11 +315,10 @@ $ vagrant up --provider libvirt
 </div>
 </div>
 <div class="section" id="file-system-synce">
-<h4>File System Synce<a class="headerlink" href="#file-system-synce" title="Permalink to this headline">¶</a></h4>
+<h3>File System Synce<a class="headerlink" href="#file-system-synce" title="Permalink to this headline">¶</a></h3>
 <p>vagrant ได้ทำการ sync file system ให้ระหว่าง host และ vm ผ่านทาง <code class="docutils literal"><span class="pre">/home/vagrant/sync</span></code>
 ทำให้ vm สามารถใช้งาน file จากภายนอกได้โดยตรง แต่ถ้าหากมีการเปลี่ยนแปลง  file ใน host จะ
 ต้องสั่ง <code class="docutils literal"><span class="pre">vagrant</span> <span class="pre">reload</span></code> ก่อนการใช้งาน  vm</p>
-</div>
 </div>
 </div>
 </div>
