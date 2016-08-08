@@ -1,6 +1,24 @@
-====================
-Build Infrastructure
-====================
+=========================
+Setup HOST Infrastructure
+=========================
+
+HOST Machine
+============
+Nested KVM
+----------
+เมื่อมีการใช้งาน kvm  เราสามารถตั้งค่าเพื่อให้สามารถใช้งาน kvm ซ้อน kvmได้ จะทำให้ instance ที่สร้าง
+มีประสิทธิภาพการใชงานเร็วกว่าการทำงานบน QEMU emulation โดย Linux kernel จะยังไม่เปิดใช้ความ
+สามารถนี้โดย default ต้องมีการตั้งค่า::
+
+  su -
+  rmmod kvm-intel
+  echo 'options kvm-intel nested=y' >> /etc/modprobe.d/dist.conf"
+  modprobe kvm-intel
+
+ตรวจสอบ kernel parameter::
+
+  cat /sys/module/kvm_intel/parameters/nested
+  Y
 
 Vagrant
 =======
@@ -14,7 +32,7 @@ Vagrant
    * `vagrant libvirt เพื่อดู config <https://github.com/vagrant-libvirt/vagrant-libvirt>`_;
 
 Install vagrant
-***************
+---------------
 การติดตั้ง vagrant จะแตกต่างกันระหว่าง os ขั้นตอนต่อไปนี้เป็นการติดตั้ง vagrant บน Fedora 24
 ::
 
