@@ -88,7 +88,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#devstack-with-vagrant">Devstack with Vagrant</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#install-devstack">Install Devstack</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#create-local-conf">create local.conf</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#error">Error</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#manage-devstack">Manage Devstack</a></li>
@@ -331,16 +330,38 @@ run stack.sh:</p>
 <img alt="_images/devstack01.png" src="_images/devstack01.png" />
 <p>login ด้วย admin/password</p>
 <img alt="_images/devstack02.png" src="_images/devstack02.png" />
-</div>
-<div class="section" id="error">
-<h4>Error<a class="headerlink" href="#error" title="Permalink to this headline">¶</a></h4>
-<p>เมื่อทำการทดสอบ การสร้าง Instance จะเกิด error:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Error</span><span class="p">:</span> <span class="n">Failed</span> <span class="n">to</span> <span class="n">perform</span> <span class="n">requested</span> <span class="n">operation</span> <span class="n">on</span> <span class="n">instance</span> <span class="s2">&quot;testv&quot;</span><span class="p">,</span>
-<span class="n">the</span> <span class="n">instance</span> <span class="n">has</span> <span class="n">an</span> <span class="n">error</span> <span class="n">status</span><span class="p">:</span> <span class="n">Please</span> <span class="k">try</span> <span class="n">again</span> <span class="n">later</span>
-<span class="p">[</span><span class="n">Error</span><span class="p">:</span> <span class="n">No</span> <span class="n">valid</span> <span class="n">host</span> <span class="n">was</span> <span class="n">found</span><span class="o">.</span> <span class="n">There</span> <span class="n">are</span> <span class="ow">not</span> <span class="n">enough</span> <span class="n">hosts</span> <span class="n">available</span><span class="o">.</span><span class="p">]</span><span class="o">.</span>
+<p>local.conf devstack2.exaple.com:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">devstack2</span>
+<span class="c1">## change to root</span>
+<span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
+<span class="n">useradd</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">stack</span> <span class="n">stack</span>
+<span class="n">echo</span> <span class="s2">&quot;stack ALL=(ALL) NOPASSWD: ALL&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sudoers</span>
+<span class="n">exit</span>
+
+<span class="c1">## on normal vagrant user</span>
+<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">update</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">install</span> <span class="n">git</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">dev</span><span class="o">/</span><span class="n">devstack</span>
+<span class="n">cd</span> <span class="n">devstack</span>
+
+<span class="n">vi</span> <span class="n">local</span><span class="o">.</span><span class="n">conf</span>
+
+<span class="p">[[</span><span class="n">local</span><span class="o">|</span><span class="n">localrc</span><span class="p">]]</span>
+<span class="n">HOST_IP</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.7</span>
+<span class="n">SERVICE_HOST</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span>
+<span class="n">MYSQL_HOST</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span>
+<span class="n">RABBIT_HOST</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span>
+<span class="n">GLANCE_HOSTPORT</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span><span class="p">:</span><span class="mi">9292</span>
+<span class="n">ADMIN_PASSWORD</span><span class="o">=</span><span class="n">secret</span>
+<span class="n">MYSQL_PASSWORD</span><span class="o">=</span><span class="n">secret</span>
+<span class="n">RABBIT_PASSWORD</span><span class="o">=</span><span class="n">secret</span>
+<span class="n">SERVICE_PASSWORD</span><span class="o">=</span><span class="n">secret</span>
+
+<span class="c1">## Neutron options</span>
+<span class="n">PUBLIC_INTERFACE</span><span class="o">=</span><span class="n">eth1</span>
+<span class="n">ENABLED_SERVICES</span><span class="o">=</span><span class="n">n</span><span class="o">-</span><span class="n">cpu</span><span class="p">,</span><span class="n">rabbit</span><span class="p">,</span><span class="n">q</span><span class="o">-</span><span class="n">agt</span>
 </pre></div>
 </div>
-<img alt="_images/devstack10.png" src="_images/devstack10.png" />
 <p>ให้ทำการแก้ไขด้วยการ เพิ่ม ค่าตัวแปรใน <code class="docutils literal"><span class="pre">/etc/nova/nova.conf</span></code></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nova</span><span class="o">/</span><span class="n">nova</span><span class="o">.</span><span class="n">conf</span>
 <span class="c1">## Add these two lines</span>
