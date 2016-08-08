@@ -154,16 +154,38 @@ login ด้วย admin/password
 
 .. image:: _images/devstack02.png
 
+local.conf devstack2.exaple.com::
 
-Error
------
-เมื่อทำการทดสอบ การสร้าง Instance จะเกิด error::
+  vagrant ssh devstack2
+  ## change to root
+  sudo su -
+  useradd -d /opt/stack stack
+  echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+  exit
 
-  Error: Failed to perform requested operation on instance "testv",
-  the instance has an error status: Please try again later
-  [Error: No valid host was found. There are not enough hosts available.].
+  ## on normal vagrant user
+  sudo dnf update -y
+  sudo dnf install git -y
+  git clone https://git.openstack.org/openstack-dev/devstack
+  cd devstack
 
-.. image:: _images/devstack10.png
+  vi local.conf
+
+  [[local|localrc]]
+  HOST_IP=172.18.161.7
+  SERVICE_HOST=172.18.161.6
+  MYSQL_HOST=172.18.161.6
+  RABBIT_HOST=172.18.161.6
+  GLANCE_HOSTPORT=172.18.161.6:9292
+  ADMIN_PASSWORD=secret
+  MYSQL_PASSWORD=secret
+  RABBIT_PASSWORD=secret
+  SERVICE_PASSWORD=secret
+
+  ## Neutron options
+  PUBLIC_INTERFACE=eth1
+  ENABLED_SERVICES=n-cpu,rabbit,q-agt
+
 
 ให้ทำการแก้ไขด้วยการ เพิ่ม ค่าตัวแปรใน ``/etc/nova/nova.conf``
 ::
