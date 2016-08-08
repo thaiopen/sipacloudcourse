@@ -9,7 +9,7 @@ Devstack with Vagrant
 
 .. literalinclude::  _source/Vagrantfile2
 
-Download complete file :download:`Vagrantfile2 <./_source/Vagrantfile2>`::
+Download complete file :download:`Vagrantfile2 <./_source/Vagrantfile2>`
 
 .. image:: _images/devstack-arch.png
 
@@ -68,7 +68,7 @@ create local.conf
   RABBIT_PASSWORD=secret
   SERVICE_PASSWORD=secret
 
-  ## Do not use Nova-Network
+  ## Do not use Nova-Networkc
   disable_service n-net
   enable_plugin neutron https://git.openstack.org/openstack/neutron
   ## Enable Neutron
@@ -111,9 +111,11 @@ create local.conf
 
   IMAGE_URLS+=",http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2"
 
-
+สามารถ download ได้ที่ :download:`Vagrantfile2 <./_source/local2.conf>`
 run stack.sh::
 
+  wget https://thaiopen.github.io/sipacloudcourse/_downloads/local2.conf
+  mv local2.conf local.conf
   ./stack.sh
 
 script ``stack.sh`` จะทำการ download source code จาก github และมาติดตั้งให้เองอัตโนมัติ

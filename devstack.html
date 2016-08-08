@@ -195,10 +195,8 @@
 <span class="n">end</span>
 </pre></div>
 </div>
-<p>Download complete file <a class="reference download internal" href="_downloads/Vagrantfile2" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile2</span></code></a>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">image</span><span class="p">::</span> <span class="n">_images</span><span class="o">/</span><span class="n">devstack</span><span class="o">-</span><span class="n">arch</span><span class="o">.</span><span class="n">png</span>
-</pre></div>
-</div>
+<p>Download complete file <a class="reference download internal" href="_downloads/Vagrantfile2" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile2</span></code></a></p>
+<img alt="_images/devstack-arch.png" src="_images/devstack-arch.png" />
 <p>from  <a class="reference external" href="http://docs.openstack.org/developer/devstack/guides/neutron.html">http://docs.openstack.org/developer/devstack/guides/neutron.html</a></p>
 <div class="section" id="install-devstack">
 <h3>Install Devstack<a class="headerlink" href="#install-devstack" title="Permalink to this headline">¶</a></h3>
@@ -250,7 +248,7 @@ DATABASE_PASSWORD=secret
 RABBIT_PASSWORD=secret
 SERVICE_PASSWORD=secret
 
-## Do not use Nova-Network
+## Do not use Nova-Networkc
 disable_service n-net
 enable_plugin neutron https://git.openstack.org/openstack/neutron
 ## Enable Neutron
@@ -294,8 +292,11 @@ default_store=file
 IMAGE_URLS+=&quot;,http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2&quot;
 </pre></div>
 </div>
-<p>run stack.sh:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">stack</span><span class="o">.</span><span class="n">sh</span>
+<p>สามารถ download ได้ที่ <a class="reference download internal" href="_downloads/local2.conf" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile2</span></code></a>
+run stack.sh:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">thaiopen</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">sipacloudcourse</span><span class="o">/</span><span class="n">_downloads</span><span class="o">/</span><span class="n">local2</span><span class="o">.</span><span class="n">conf</span>
+<span class="n">mv</span> <span class="n">local2</span><span class="o">.</span><span class="n">conf</span> <span class="n">local</span><span class="o">.</span><span class="n">conf</span>
+<span class="o">./</span><span class="n">stack</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>
 <p>script <code class="docutils literal"><span class="pre">stack.sh</span></code> จะทำการ download source code จาก github และมาติดตั้งให้เองอัตโนมัติ
