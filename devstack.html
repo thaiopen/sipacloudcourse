@@ -90,8 +90,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#create-local-conf">create local.conf</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#devstack-component-timing">DevStack Component Timing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#manage-devstack">Manage Devstack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-devstack-plugin">Add Devstack plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">DevStack Component Timing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#neutron-network-default-settings">Neutron Network Default Settings</a></li>
 </ul>
 </li>
@@ -300,32 +302,31 @@ run stack.sh:</p>
 <p>script <code class="docutils literal"><span class="pre">stack.sh</span></code> จะทำการ download source code จาก github และมาติดตั้งให้เองอัตโนมัติ
 โดยdownload มาเก็บไปใน <code class="docutils literal"><span class="pre">/opt/stack</span></code> และผลลัพท์ที่ได้ จะสามารถใช้งาน openstack ได้ทันที:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=========================</span>
-<span class="n">DevStack</span> <span class="n">Component</span> <span class="n">Timing</span>
-<span class="o">=========================</span>
-<span class="n">Total</span> <span class="n">runtime</span>         <span class="mi">3780</span>
-
-<span class="n">run_process</span>            <span class="mi">41</span>
-<span class="n">pip_install</span>           <span class="mi">535</span>
-<span class="n">restart_apache_server</span>   <span class="mi">8</span>
-<span class="n">wait_for_service</span>       <span class="mi">10</span>
-<span class="n">yum_install</span>           <span class="mi">181</span>
-<span class="n">git_timed</span>             <span class="mi">2075</span>
-<span class="o">=========================</span>
-
-
-
-<span class="n">This</span> <span class="ow">is</span> <span class="n">your</span> <span class="n">host</span> <span class="n">IP</span> <span class="n">address</span><span class="p">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span>
-<span class="n">This</span> <span class="ow">is</span> <span class="n">your</span> <span class="n">host</span> <span class="n">IPv6</span> <span class="n">address</span><span class="p">:</span> <span class="p">::</span><span class="mi">1</span>
-<span class="n">Horizon</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">available</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span><span class="o">/</span><span class="n">dashboard</span>
-<span class="n">Keystone</span> <span class="ow">is</span> <span class="n">serving</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">121.113</span><span class="o">/</span><span class="n">identity</span><span class="o">/</span>
-<span class="n">The</span> <span class="n">default</span> <span class="n">users</span> <span class="n">are</span><span class="p">:</span> <span class="n">admin</span> <span class="ow">and</span> <span class="n">demo</span>
-<span class="n">The</span> <span class="n">password</span><span class="p">:</span> <span class="n">password</span>
-<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">10</span><span class="p">:</span><span class="mi">32</span><span class="p">:</span><span class="mf">41.679</span> <span class="o">|</span> <span class="n">WARNING</span><span class="p">:</span>
-<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">10</span><span class="p">:</span><span class="mi">32</span><span class="p">:</span><span class="mf">41.679</span> <span class="o">|</span> <span class="n">Using</span> <span class="n">lib</span><span class="o">/</span><span class="n">neutron</span><span class="o">-</span><span class="n">legacy</span> <span class="ow">is</span> <span class="n">deprecated</span><span class="p">,</span> <span class="ow">and</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">future</span>
-<span class="mi">2016</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">19</span> <span class="mi">10</span><span class="p">:</span><span class="mi">32</span><span class="p">:</span><span class="mf">41.679</span> <span class="o">|</span> <span class="n">stack</span><span class="o">.</span><span class="n">sh</span> <span class="n">completed</span> <span class="ow">in</span> <span class="mi">3780</span> <span class="n">seconds</span><span class="o">.</span>
 </pre></div>
 </div>
-<p>เปิด browser ไปยัง <a class="reference external" href="http://192.168.121.113/dashboard">http://192.168.121.113/dashboard</a></p>
+</div>
+</div>
+<div class="section" id="devstack-component-timing">
+<h3>DevStack Component Timing<a class="headerlink" href="#devstack-component-timing" title="Permalink to this headline">¶</a></h3>
+<p>Total runtime         5440</p>
+<p>run_process            84
+test_with_retry         4
+pip_install           742
+restart_apache_server  18
+wait_for_service       13
+yum_install           1219
+git_timed             1911
+=========================</p>
+<p>This is your host IP address: 172.18.161.6
+This is your host IPv6 address: ::1
+Horizon is now available at <a class="reference external" href="http://172.18.161.6/dashboard">http://172.18.161.6/dashboard</a>
+Keystone is serving at <a class="reference external" href="http://172.18.161.6/identity/">http://172.18.161.6/identity/</a>
+The default users are: admin and demo
+The password: secret
+2016-08-09 03:28:11.972 | WARNING:
+2016-08-09 03:28:11.972 | Using lib/neutron-legacy is deprecated, and it will be removed in the future
+2016-08-09 03:28:11.972 | stack.sh completed in 5440 seconds.</p>
+<p>เปิด browser ไปยัง <a class="reference external" href="http://172.18.161.6/dashboard">http://172.18.161.6/dashboard</a></p>
 <img alt="_images/devstack01.png" src="_images/devstack01.png" />
 <p>login ด้วย admin/password</p>
 <img alt="_images/devstack02.png" src="_images/devstack02.png" />
@@ -368,7 +369,6 @@ run stack.sh:</p>
 <span class="n">cpu_allocation_ratio</span><span class="o">=</span><span class="mi">20</span>
 <span class="c1">## Default value here is 16</span>
 </pre></div>
-</div>
 </div>
 </div>
 <div class="section" id="manage-devstack">
@@ -455,32 +455,49 @@ process  2 ซึ่งเป็น process ของ keystone  ``enter``  เ�
 <p>devstack จะทำการสร้าง network ไว้ให้เป็นตัวอย่างที่ 10.0.0.0/24</p>
 <p>หลังจากที่สำเร็จ จะได้ผลลัพท์:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=========================</span>
-<span class="n">DevStack</span> <span class="n">Component</span> <span class="n">Timing</span>
-<span class="o">=========================</span>
-<span class="n">Total</span> <span class="n">runtime</span>         <span class="mi">5440</span>
-
-<span class="n">run_process</span>            <span class="mi">84</span>
-<span class="n">test_with_retry</span>         <span class="mi">4</span>
-<span class="n">pip_install</span>           <span class="mi">742</span>
-<span class="n">restart_apache_server</span>  <span class="mi">18</span>
-<span class="n">wait_for_service</span>       <span class="mi">13</span>
-<span class="n">yum_install</span>           <span class="mi">1219</span>
-<span class="n">git_timed</span>             <span class="mi">1911</span>
-<span class="o">=========================</span>
-
-
-
-<span class="n">This</span> <span class="ow">is</span> <span class="n">your</span> <span class="n">host</span> <span class="n">IP</span> <span class="n">address</span><span class="p">:</span> <span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span>
-<span class="n">This</span> <span class="ow">is</span> <span class="n">your</span> <span class="n">host</span> <span class="n">IPv6</span> <span class="n">address</span><span class="p">:</span> <span class="p">::</span><span class="mi">1</span>
-<span class="n">Horizon</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">available</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span><span class="o">/</span><span class="n">dashboard</span>
-<span class="n">Keystone</span> <span class="ow">is</span> <span class="n">serving</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span><span class="o">/</span><span class="n">identity</span><span class="o">/</span>
-<span class="n">The</span> <span class="n">default</span> <span class="n">users</span> <span class="n">are</span><span class="p">:</span> <span class="n">admin</span> <span class="ow">and</span> <span class="n">demo</span>
-<span class="n">The</span> <span class="n">password</span><span class="p">:</span> <span class="n">secret</span>
-<span class="mi">2016</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">09</span> <span class="mi">03</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mf">11.972</span> <span class="o">|</span> <span class="n">WARNING</span><span class="p">:</span>
-<span class="mi">2016</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">09</span> <span class="mi">03</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mf">11.972</span> <span class="o">|</span> <span class="n">Using</span> <span class="n">lib</span><span class="o">/</span><span class="n">neutron</span><span class="o">-</span><span class="n">legacy</span> <span class="ow">is</span> <span class="n">deprecated</span><span class="p">,</span> <span class="ow">and</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">future</span>
-<span class="mi">2016</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">09</span> <span class="mi">03</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mf">11.972</span> <span class="o">|</span> <span class="n">stack</span><span class="o">.</span><span class="n">sh</span> <span class="n">completed</span> <span class="ow">in</span> <span class="mi">5440</span> <span class="n">seconds</span><span class="o">.</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="id1">
+<h3>DevStack Component Timing<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Total runtime         5440</p>
+<p>run_process            84
+test_with_retry         4
+pip_install           742
+restart_apache_server  18
+wait_for_service       13
+yum_install           1219
+git_timed             1911
+=========================</p>
+<p>This is your host IP address: 172.18.161.6
+This is your host IPv6 address: ::1
+Horizon is now available at <a class="reference external" href="http://172.18.161.6/dashboard">http://172.18.161.6/dashboard</a>
+Keystone is serving at <a class="reference external" href="http://172.18.161.6/identity/">http://172.18.161.6/identity/</a>
+The default users are: admin and demo
+The password: secret
+2016-08-09 03:28:11.972 | WARNING:
+2016-08-09 03:28:11.972 | Using lib/neutron-legacy is deprecated, and it will be removed in the future
+2016-08-09 03:28:11.972 | stack.sh completed in 5440 seconds.</p>
+<blockquote>
+<div><p>Total runtime         2872</p>
+<p>run_process           103
+test_with_retry         3
+pip_install           314
+restart_apache_server  19
+wait_for_service       14
+yum_install           182
+git_timed             1006
+=========================</p>
+<p>This is your host IP address: 192.168.121.113
+This is your host IPv6 address: ::1
+Horizon is now available at <a class="reference external" href="http://192.168.121.113/dashboard">http://192.168.121.113/dashboard</a>
+Keystone is serving at <a class="reference external" href="http://192.168.121.113:5000/v3/">http://192.168.121.113:5000/v3/</a>
+The default users are: admin and demo
+The password: password
+2016-07-19 13:29:54.781 | WARNING:
+2016-07-19 13:29:54.781 | Using lib/neutron-legacy is deprecated, and it will be removed in the future
+2016-07-19 13:29:54.781 | stack.sh completed in 2872 seconds.</p>
+</div></blockquote>
 <p>ทดสอบ  <code class="docutils literal"><span class="pre">screen</span> <span class="pre">-x</span> <span class="pre">stack</span></code> และ list ด้วย <code class="docutils literal"><span class="pre">Ctrl</span> <span class="pre">a</span> <span class="pre">&quot;</span></code></p>
 <img alt="_images/devstack06.png" src="_images/devstack06.png" />
 <p>ทดสอบโดย browser <code class="docutils literal"><span class="pre">http://192.168.121.113/dashboard</span></code> เพื่อดูเมนู ที่เปลี่ยนไป จากรูปจะเห็นค่า
