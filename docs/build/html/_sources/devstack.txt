@@ -152,9 +152,7 @@ The password: secret
 
 .. image:: _images/devstack01.png
 
-login ด้วย admin/password
 
-.. image:: _images/devstack02.png
 
 local.conf devstack2.exaple.com::
 
