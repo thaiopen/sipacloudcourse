@@ -121,31 +121,31 @@ run stack.sh::
 script ``stack.sh`` จะทำการ download source code จาก github และมาติดตั้งให้เองอัตโนมัติ
 โดยdownload มาเก็บไปใน ``/opt/stack`` และผลลัพท์ที่ได้ จะสามารถใช้งาน openstack ได้ทันที::
 
-=========================
-DevStack Component Timing
-=========================
-Total runtime         5440
+  =========================
+  DevStack Component Timing
+  =========================
+  Total runtime         5440
 
-run_process            84
-test_with_retry         4
-pip_install           742
-restart_apache_server  18
-wait_for_service       13
-yum_install           1219
-git_timed             1911
-=========================
+  run_process            84
+  test_with_retry         4
+  pip_install           742
+  restart_apache_server  18
+  wait_for_service       13
+  yum_install           1219
+  git_timed             1911
+  =========================
 
 
 
-This is your host IP address: 172.18.161.6
-This is your host IPv6 address: ::1
-Horizon is now available at http://172.18.161.6/dashboard
-Keystone is serving at http://172.18.161.6/identity/
-The default users are: admin and demo
-The password: secret
-2016-08-09 03:28:11.972 | WARNING:
-2016-08-09 03:28:11.972 | Using lib/neutron-legacy is deprecated, and it will be removed in the future
-2016-08-09 03:28:11.972 | stack.sh completed in 5440 seconds.
+  This is your host IP address: 172.18.161.6
+  This is your host IPv6 address: ::1
+  Horizon is now available at http://172.18.161.6/dashboard
+  Keystone is serving at http://172.18.161.6/identity/
+  The default users are: admin and demo
+  The password: secret
+  2016-08-09 03:28:11.972 | WARNING:
+  2016-08-09 03:28:11.972 | Using lib/neutron-legacy is deprecated, and it will be removed in the future
+  2016-08-09 03:28:11.972 | stack.sh completed in 5440 seconds.
 
 
 เปิด browser ไปยัง http://172.18.161.6/dashboard
