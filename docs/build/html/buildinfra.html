@@ -89,7 +89,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vagrant">Vagrant</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#install-vagrant">Install vagrant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-vagrant-from-rpm">Install vagrant from rpm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-vagrant-from-dnf">Install vagrant from dnf</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#repository">repository</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#download-box">Download box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#connect-to-vm">Connect to VM</a></li>
@@ -189,8 +190,8 @@
 <li><a class="reference external" href="https://github.com/vagrant-libvirt/vagrant-libvirt">vagrant libvirt เพื่อดู config</a>;</li>
 </ul>
 </div>
-<div class="section" id="install-vagrant">
-<h3>Install vagrant<a class="headerlink" href="#install-vagrant" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="install-vagrant-from-rpm">
+<h3>Install vagrant from rpm<a class="headerlink" href="#install-vagrant-from-rpm" title="Permalink to this headline">¶</a></h3>
 <p>การติดตั้ง vagrant จะแตกต่างกันระหว่าง os ขั้นตอนต่อไปนี้เป็นการติดตั้ง vagrant บน Fedora 24</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">dnf</span> <span class="n">group</span> <span class="n">install</span> <span class="s2">&quot;C Development Tools and Libraries&quot;</span>
 <span class="n">sudo</span> <span class="n">dnf</span> <span class="n">install</span>  <span class="n">ruby</span><span class="o">-</span><span class="n">devel</span> <span class="n">zlib</span><span class="o">-</span><span class="n">devel</span>
@@ -205,6 +206,12 @@
 <p>ติดตั้ง plugin เพื่มเติิมสำหรับ libvirt</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vagrant</span> <span class="n">plugin</span> <span class="n">install</span> <span class="n">vagrant</span><span class="o">-</span><span class="n">libvirt</span>
 <span class="n">vagrant</span> <span class="n">plugin</span> <span class="n">install</span> <span class="n">vagrant</span><span class="o">-</span><span class="n">scp</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-vagrant-from-dnf">
+<h3>Install vagrant from dnf<a class="headerlink" href="#install-vagrant-from-dnf" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">dnf</span> <span class="n">install</span> <span class="n">vagrant</span>
 </pre></div>
 </div>
 </div>

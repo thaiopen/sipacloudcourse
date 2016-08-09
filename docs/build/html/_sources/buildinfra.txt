@@ -31,8 +31,8 @@ Vagrant
    * `vagrant by hasicorp <https://www.vagrantup.com/>`_;
    * `vagrant libvirt เพื่อดู config <https://github.com/vagrant-libvirt/vagrant-libvirt>`_;
 
-Install vagrant
----------------
+Install vagrant from rpm
+------------------------
 การติดตั้ง vagrant จะแตกต่างกันระหว่าง os ขั้นตอนต่อไปนี้เป็นการติดตั้ง vagrant บน Fedora 24
 ::
 
@@ -50,6 +50,12 @@ Install vagrant
 
 	vagrant plugin install vagrant-libvirt
 	vagrant plugin install vagrant-scp
+
+Install vagrant from dnf
+------------------------
+::
+
+  sudo dnf install vagrant
 
 repository
 ----------
