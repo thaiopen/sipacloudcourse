@@ -133,7 +133,27 @@ local.conf devstack2.exaple.com::
   ## Neutron options
   PUBLIC_INTERFACE=eth1
   ENABLED_SERVICES=n-cpu,rabbit,q-agt
+  
+::
 
+  =========================
+  DevStack Component Timing
+  =========================
+  Total runtime   2383
+
+  run_process       7
+  pip_install     463
+  yum_install     1185
+  git_timed       603
+  =========================
+
+
+
+  This is your host IP address: 172.18.161.7
+  This is your host IPv6 address: ::1
+  2016-08-09 04:38:18.561 | WARNING:
+  2016-08-09 04:38:18.561 | Using lib/neutron-legacy is deprecated, and it will be removed in the future
+  2016-08-09 04:38:18.561 | stack.sh completed in 2383 seconds.
 
 ให้ทำการแก้ไขด้วยการ เพิ่ม ค่าตัวแปรใน ``/etc/nova/nova.conf``
 ::
