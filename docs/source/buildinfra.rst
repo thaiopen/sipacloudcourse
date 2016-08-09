@@ -31,31 +31,12 @@ Vagrant
    * `vagrant by hasicorp <https://www.vagrantup.com/>`_;
    * `vagrant libvirt เพื่อดู config <https://github.com/vagrant-libvirt/vagrant-libvirt>`_;
 
-Install vagrant from rpm
-------------------------
-การติดตั้ง vagrant จะแตกต่างกันระหว่าง os ขั้นตอนต่อไปนี้เป็นการติดตั้ง vagrant บน Fedora 24
-::
-
-	sudo dnf group install "C Development Tools and Libraries"
-	sudo dnf install  ruby-devel zlib-devel
-	sudo dnf install  libxslt  libxslt-devel  libxml2  libxml2-devel redhat-lsb
-	sudo dnf install libxslt-devel libxml2-devel libvirt-devel libguestfs-tools-c ruby-devel
-	sudo dnf install redhat-rpm-config patch
-	sudo gem install nokogiri -v '1.6.8'
-	wget https://releases.hashicorp.com/vagrant/1.8.4/vagrant_1.8.4_x86_64.rpm
-	sudo dnf install vagrant_1.8.4_x86_64.rpm
-
-ติดตั้ง plugin เพื่มเติิมสำหรับ libvirt
-::
-
-	vagrant plugin install vagrant-libvirt
-	vagrant plugin install vagrant-scp
 
 Install vagrant from dnf
 ------------------------
 ::
 
-  sudo dnf install vagrant
+  sudo dnf install vagrant vagrant-libvirt
 
 repository
 ----------
