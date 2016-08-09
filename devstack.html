@@ -233,8 +233,73 @@ file Vagrant จากตัวอย่างด้านบน</p>
 </div>
 <div class="section" id="create-local-conf">
 <h4>create local.conf<a class="headerlink" href="#create-local-conf" title="Permalink to this headline">¶</a></h4>
-<p>การใช้งานการปรับแต่ง devstack จะขึ้นกับรายละเอียดที่ระบุไว้ใน local.conf:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">literalinclude</span><span class="p">::</span>  <span class="n">_source</span><span class="o">/</span><span class="n">local2</span><span class="o">.</span><span class="n">conf</span>
+<p>การใช้งานการปรับแต่ง devstack จะขึ้นกับรายละเอียดที่ระบุไว้ใน local.conf</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>[[local|localrc]]
+## ip config
+HOST_IP=172.18.161.6
+SERVICE_HOST=172.18.161.6
+MYSQL_HOST=172.18.161.6
+RABBIT_HOST=172.18.161.6
+GLANCE_HOSTPORT=172.18.161.6:9292
+## password
+ADMIN_PASSWORD=secret
+DATABASE_PASSWORD=secret
+RABBIT_PASSWORD=secret
+SERVICE_PASSWORD=secret
+
+## Do not use Nova-Network
+disable_service n-net
+enable_plugin neutron https://git.openstack.org/openstack/neutron
+## Enable Neutron
+ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-agt,q-l3,q-metering,q-qos
+
+## Neutron options
+Q_USE_SECGROUP=True
+FLOATING_RANGE=&quot;172.18.161.0/24&quot;
+FIXED_RANGE=&quot;10.0.0.0/24&quot;
+Q_FLOATING_ALLOCATION_POOL=start=172.18.161.250,end=172.18.161.254
+PUBLIC_NETWORK_GATEWAY=&quot;172.18.161.1&quot;
+PUBLIC_INTERFACE=eth1
+
+# Open vSwitch provider networking configuration
+Q_USE_PROVIDERNET_FOR_PUBLIC=True
+OVS_PHYSICAL_BRIDGE=br-ex
+PUBLIC_BRIDGE=br-ex
+OVS_BRIDGE_MAPPINGS=public:br-ex
+
+# Enable VPN plugin for neutron
+enable_plugin neutron-vpnaas https://git.openstack.org/openstack/neutron-vpnaas
+
+# Enable Firewall plugin for neutron
+enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
+ENABLED_SERVICES+=,q-fwaas
+Q_SERVICE_PLUGIN_CLASSES=neutron.services.firewall.fwaas_plugin.FirewallPlugin
+
+# Enable Load Balancer plugin for neutron
+enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
+enable_plugin octavia https://github.com/openstack/octavia.git
+ENABLED_SERVICES+=,q-lbaasv2
+ENABLED_SERVICES+=,octavia,o-cw,o-hk,o-hm,o-api
+
+
+
+
+#2 Heat service
+enable_service heat h-eng h-api h-api-cfn h-api-cw
+
+# Enable Ceilometer (Metering)
+enable_service ceilometer-acompute ceilometer-acentral ceilometer-anotification ceilometer-collector ceilometer-api
+enable_plugin ceilometer https://git.openstack.org/openstack/ceilometer
+enable_plugin aodh https://git.openstack.org/openstack/aodh
+
+CEILOMETER_BACKEND=mongodb
+CEILOMETER_NOTIFICATION_TOPICS=notifications,profiler
+
+[[post-config|$GLANCE_API_CONF]]
+[DEFAULT]
+default_store=file
+
+IMAGE_URLS+=&quot;,http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1606.qcow2&quot;
 </pre></div>
 </div>
 <p>สามารถ download ได้ที่ <a class="reference download internal" href="_downloads/local2.conf" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile2</span></code></a>
