@@ -53,7 +53,7 @@ file Vagrant จากตัวอย่างด้านบน
 
 create local.conf
 -----------------
-การใช้งานการปรับแต่ง devstack จะขึ้นกับรายละเอียดที่ระบุไว้ใน local.conf::
+การใช้งานการปรับแต่ง devstack จะขึ้นกับรายละเอียดที่ระบุไว้ใน local.conf
 
 .. literalinclude::  _source/local2.conf
 
