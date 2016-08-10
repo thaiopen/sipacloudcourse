@@ -248,7 +248,14 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <h4>create local.conf<a class="headerlink" href="#create-local-conf" title="Permalink to this headline">¶</a></h4>
 <p>การใช้งานการปรับแต่ง devstack จะขึ้นกับรายละเอียดที่ระบุไว้ใน local.conf</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>[[local|localrc]]
-## ip config
+
+## Recloning will insure that your stack is up to date
+#RECLONE=yes
+
+## Run with no internet Access
+#OFFLINE=True
+
+## Ip config base on structure
 HOST_IP=172.18.161.6
 SERVICE_HOST=172.18.161.6
 MYSQL_HOST=172.18.161.6
@@ -260,15 +267,14 @@ DATABASE_PASSWORD=secret
 RABBIT_PASSWORD=secret
 SERVICE_PASSWORD=secret
 
-## nova object storage
-ENABLED_SERVICES+=,n-obj
+### Enable Service
 
 ## Do not use Nova-Network
 disable_service n-net
 
-## Enable Neutron
+## Enable Neutron (Network)
 enable_plugin neutron https://git.openstack.org/openstack/neutron
-ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-agt,q-l3
+ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-qos,tempest
 
 
 ## Neutron options
@@ -308,9 +314,12 @@ enable_service s-proxy s-object s-container s-account
 
 
 ## Enable Ceilometer (Metering)
-enable_service ceilometer-acompute ceilometer-acentral ceilometer-anotification ceilometer-collector ceilometer-api
 enable_plugin ceilometer https://git.openstack.org/openstack/ceilometer
+ENABLED_SERVICES+=ceilometer-acompute, ceilometer-acentral,ceilometer-anotification
+ENABLED_SERVICES+=ceilometer-collector, ceilometer-api
+
 enable_plugin aodh https://git.openstack.org/openstack/aodh
+
 ## Enable Heat
 ENABLED_SERVICES+=,heat,h-api, h-api-cfn, h-api-cw, h-eng
 
