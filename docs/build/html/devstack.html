@@ -296,14 +296,12 @@ enable_plugin neutron-vpnaas https://git.openstack.org/openstack/neutron-vpnaas
 
 ## Enable Firewall plugin for neutron
 enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
-ENABLED_SERVICES+=,q-fwaas
-Q_SERVICE_PLUGIN_CLASSES=neutron.services.firewall.fwaas_plugin.FirewallPlugin
 
 ## Enable Load Balancer plugin for neutron
 enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
-enable_plugin octavia https://github.com/openstack/octavia.git
 ENABLED_SERVICES+=,q-lbaasv2
-ENABLED_SERVICES+=,octavia,o-cw,o-hk,o-hm,o-api
+#enable_plugin octavia https://github.com/openstack/octavia.git
+#ENABLED_SERVICES+=,octavia,o-cw,o-hk,o-hm,o-api
 
 ## Swift
 
