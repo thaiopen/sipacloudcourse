@@ -6,8 +6,8 @@ SCRIPT
 
 Vagrant.configure("2") do |config|
   config.vm.box = "fedora/24-cloud-base"
-  box.vm.provision :shell, :inline => "echo root:password  | chpasswd"
-  box.vm.provision :shell, :inline => $script
+  config.vm.provision :shell, :inline => "echo root:password  | chpasswd"
+  config.vm.provision :shell, :inline => $script
   config.vm.define :devstack1 do |node|
     node.vm.hostname = "devstack1.example.com"
     node.vm.network :private_network, :ip => "172.18.161.6"
