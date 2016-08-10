@@ -160,38 +160,43 @@
 <div class="section" id="devstack-with-vagrant">
 <h2>Devstack with Vagrant<a class="headerlink" href="#devstack-with-vagrant" title="Permalink to this headline">¶</a></h2>
 <p>ตัวอย่าง file vagrant สำหรับการทดสอบ devstack</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -*- mode: ruby -*-</span>
-<span class="c1"># vi: set ft=ruby :</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span># -*- mode: ruby -*-
+# vi: set ft=ruby :
+$script = &lt;&lt;SCRIPT
+sudo dnf update -y
+SCRIPT
 
-<span class="n">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="n">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;fedora/24-cloud-base&quot;</span>
-  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="p">:</span><span class="n">devstack1</span> <span class="n">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
-    <span class="n">node</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;devstack1.example.com&quot;</span>
-    <span class="n">node</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="p">:</span><span class="n">private_network</span><span class="p">,</span> <span class="p">:</span><span class="n">ip</span> <span class="o">=&gt;</span> <span class="s2">&quot;172.18.161.6&quot;</span>
-    <span class="n">node</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provider</span> <span class="p">:</span><span class="n">libvirt</span> <span class="n">do</span> <span class="o">|</span><span class="n">domain</span><span class="o">|</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;qemu+unix:///system&#39;</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="s1">&#39;kvm&#39;</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="mi">8192</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">cpus</span> <span class="o">=</span> <span class="mi">2</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">nested</span> <span class="o">=</span> <span class="n">true</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">volume_cache</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">storage</span> <span class="p">:</span><span class="n">file</span><span class="p">,</span> <span class="p">:</span><span class="n">size</span> <span class="o">=&gt;</span> <span class="s1">&#39;20G&#39;</span>
-   <span class="n">end</span>
-  <span class="n">end</span>
+Vagrant.configure(&quot;2&quot;) do |config|
+  config.vm.box = &quot;fedora/24-cloud-base&quot;
+  box.vm.provision :shell, :inline =&gt; &quot;echo root:password  | chpasswd&quot;
+  box.vm.provision :shell, :inline =&gt; $script
+  config.vm.define :devstack1 do |node|
+    node.vm.hostname = &quot;devstack1.example.com&quot;
+    node.vm.network :private_network, :ip =&gt; &quot;172.18.161.6&quot;
+    node.vm.provider :libvirt do |domain|
+      domain.uri = &#39;qemu+unix:///system&#39;
+      domain.driver = &#39;kvm&#39;
+      domain.memory = 8192
+      domain.cpus = 2
+      domain.nested = true
+      domain.volume_cache = &#39;none&#39;
+      domain.storage :file, :size =&gt; &#39;20G&#39;
+   end
+  end
 
-  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="p">:</span><span class="n">devstack2</span> <span class="n">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
-    <span class="n">node</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;devstack2.example.com&quot;</span>
-    <span class="n">node</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="p">:</span><span class="n">private_network</span><span class="p">,</span> <span class="p">:</span><span class="n">ip</span> <span class="o">=&gt;</span> <span class="s2">&quot;172.18.161.7&quot;</span>
-    <span class="n">node</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provider</span> <span class="p">:</span><span class="n">libvirt</span> <span class="n">do</span> <span class="o">|</span><span class="n">domain</span><span class="o">|</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;qemu+unix:///system&#39;</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="s1">&#39;kvm&#39;</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="mi">8192</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">cpus</span> <span class="o">=</span> <span class="mi">2</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">nested</span> <span class="o">=</span> <span class="n">true</span>
-      <span class="n">domain</span><span class="o">.</span><span class="n">volume_cache</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
-   <span class="n">end</span>
-  <span class="n">end</span>
-<span class="n">end</span>
+  config.vm.define :devstack2 do |node|
+    node.vm.hostname = &quot;devstack2.example.com&quot;
+    node.vm.network :private_network, :ip =&gt; &quot;172.18.161.7&quot;
+    node.vm.provider :libvirt do |domain|
+      domain.uri = &#39;qemu+unix:///system&#39;
+      domain.driver = &#39;kvm&#39;
+      domain.memory = 8192
+      domain.cpus = 2
+      domain.nested = true
+      domain.volume_cache = &#39;none&#39;
+   end
+  end
+end
 </pre></div>
 </div>
 <p>Download complete file <a class="reference download internal" href="_downloads/Vagrantfile2" download=""><code class="xref download docutils literal"><span class="pre">Vagrantfile2</span></code></a></p>
