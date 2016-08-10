@@ -32,8 +32,7 @@ file Vagrant จากตัวอย่างด้านบน
   vagrant up
   ## ssh to instance โดยการใช้ ชื่อที่กำหนดใน define
   vagrant ssh devstack1
-  --or--
-  vagrant ssh devstack2
+
 
   ## check vm support virtualization
   egrep -c '(vmx|svm)' /proc/cpuinfo
@@ -43,6 +42,15 @@ file Vagrant จากตัวอย่างด้านบน
   sudo su -
   useradd -d /opt/stack stack
   echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+  ## default devstack logical volume 'stack-volumes'
+  dnf install lvm2
+  pvcreate /dev/vdb
+  vgcreate stack-volumes /dev/vdb
+
+  ## list logical volume with 'vgs'
+  vgs
+
   exit
 
   ## on normal vagrant user
@@ -122,9 +130,10 @@ local.conf devstack2.exaple.com::
   [[local|localrc]]
   HOST_IP=172.18.161.7
   SERVICE_HOST=172.18.161.6
-  MYSQL_HOST=172.18.161.6
-  RABBIT_HOST=172.18.161.6
+  MYSQL_HOST=$SERVICE_HOST
+  RABBIT_HOST=$SERVICE_HOST
   GLANCE_HOSTPORT=172.18.161.6:9292
+
   ADMIN_PASSWORD=secret
   MYSQL_PASSWORD=secret
   RABBIT_PASSWORD=secret
@@ -133,7 +142,15 @@ local.conf devstack2.exaple.com::
   ## Neutron options
   PUBLIC_INTERFACE=eth1
   ENABLED_SERVICES=n-cpu,rabbit,q-agt
-  
+
+  NOVA_VNC_ENABLED=True
+  NOVNCPROXY_URL="http://$SERVICE_HOST:6080/vnc_auto.html"
+  VNCSERVER_LISTEN=$HOST_IP
+  VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTENNOVA_VNC_ENABLED=True
+  NOVNCPROXY_URL="http://$SERVICE_HOST:6080/vnc_auto.html"
+  VNCSERVER_LISTEN=$HOST_IP
+  VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTEN
+
 ::
 
   =========================
