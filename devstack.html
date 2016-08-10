@@ -168,8 +168,8 @@ SCRIPT
 
 Vagrant.configure(&quot;2&quot;) do |config|
   config.vm.box = &quot;fedora/24-cloud-base&quot;
-  box.vm.provision :shell, :inline =&gt; &quot;echo root:password  | chpasswd&quot;
-  box.vm.provision :shell, :inline =&gt; $script
+  config.vm.provision :shell, :inline =&gt; &quot;echo root:password  | chpasswd&quot;
+  config.vm.provision :shell, :inline =&gt; $script
   config.vm.define :devstack1 do |node|
     node.vm.hostname = &quot;devstack1.example.com&quot;
     node.vm.network :private_network, :ip =&gt; &quot;172.18.161.6&quot;
@@ -267,15 +267,21 @@ DATABASE_PASSWORD=secret
 RABBIT_PASSWORD=secret
 SERVICE_PASSWORD=secret
 
-### Enable Service
+### SERVICES
 
 ## Do not use Nova-Network
 disable_service n-net
 
 ## Enable Neutron (Network)
 enable_plugin neutron https://git.openstack.org/openstack/neutron
-ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-qos,tempest
-
+#ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-qos
+enable_service q-svc
+enable_service q-agt
+enable_service q-dhcp
+enable_service q-l3
+enable_service q-meta
+enable_service q-metering
+enable_service q-qos
 
 ## Neutron options
 Q_USE_SECGROUP=True
@@ -322,6 +328,14 @@ enable_service ceilometer-alarm-notifier,ceilometer-alarm-evaluator
 enable_service gnocchi-api
 GNOCCHI_COORDINATOR_URL=redis://localhost:6379?timeout=5
 CEILOMETER_PIPELINE_INTERVAL=10
+
+### PLUGINS
+
+# Enable Sahara (Data Processing)
+enable_plugin sahara git://git.openstack.org/openstack/sahara
+
+# Enable Trove (Database)
+enable_plugin trove git://git.openstack.org/openstack/trove
 
 [[post-config|$GNOCCHI_CONF]]
 [archive_policy]
