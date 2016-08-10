@@ -211,8 +211,7 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <span class="n">vagrant</span> <span class="n">up</span>
 <span class="c1">## ssh to instance โดยการใช้ ชื่อที่กำหนดใน define</span>
 <span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">devstack1</span>
-<span class="o">--</span><span class="ow">or</span><span class="o">--</span>
-<span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">devstack2</span>
+
 
 <span class="c1">## check vm support virtualization</span>
 <span class="n">egrep</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;(vmx|svm)&#39;</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">cpuinfo</span>
@@ -222,6 +221,15 @@ file Vagrant จากตัวอย่างด้านบน</p>
 <span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
 <span class="n">useradd</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">stack</span> <span class="n">stack</span>
 <span class="n">echo</span> <span class="s2">&quot;stack ALL=(ALL) NOPASSWD: ALL&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sudoers</span>
+
+<span class="c1">## default devstack logical volume &#39;stack-volumes&#39;</span>
+<span class="n">dnf</span> <span class="n">install</span> <span class="n">lvm2</span>
+<span class="n">pvcreate</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vdb</span>
+<span class="n">vgcreate</span> <span class="n">stack</span><span class="o">-</span><span class="n">volumes</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vdb</span>
+
+<span class="c1">## list logical volume with &#39;vgs&#39;</span>
+<span class="n">vgs</span>
+
 <span class="n">exit</span>
 
 <span class="c1">## on normal vagrant user</span>
@@ -247,50 +255,59 @@ DATABASE_PASSWORD=secret
 RABBIT_PASSWORD=secret
 SERVICE_PASSWORD=secret
 
+## nova object storage
+ENABLED_SERVICES+=,n-obj
+
 ## Do not use Nova-Network
 disable_service n-net
-enable_plugin neutron https://git.openstack.org/openstack/neutron
+
 ## Enable Neutron
-ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-agt,q-l3,q-metering,q-qos
+enable_plugin neutron https://git.openstack.org/openstack/neutron
+ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-agt,q-l3
+
 
 ## Neutron options
 Q_USE_SECGROUP=True
 FLOATING_RANGE=&quot;172.18.161.0/24&quot;
 FIXED_RANGE=&quot;10.0.0.0/24&quot;
-Q_FLOATING_ALLOCATION_POOL=start=172.18.161.250,end=172.18.161.254
+Q_FLOATING_ALLOCATION_POOL=start=172.18.161.245,end=172.18.161.254
 PUBLIC_NETWORK_GATEWAY=&quot;172.18.161.1&quot;
 PUBLIC_INTERFACE=eth1
 
-# Open vSwitch provider networking configuration
+## Open vSwitch provider networking configuration
 Q_USE_PROVIDERNET_FOR_PUBLIC=True
 OVS_PHYSICAL_BRIDGE=br-ex
 PUBLIC_BRIDGE=br-ex
 OVS_BRIDGE_MAPPINGS=public:br-ex
 
-# Enable VPN plugin for neutron
+## Enable VPN plugin for neutron
 enable_plugin neutron-vpnaas https://git.openstack.org/openstack/neutron-vpnaas
 
-# Enable Firewall plugin for neutron
+## Enable Firewall plugin for neutron
 enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
 ENABLED_SERVICES+=,q-fwaas
 Q_SERVICE_PLUGIN_CLASSES=neutron.services.firewall.fwaas_plugin.FirewallPlugin
 
-# Enable Load Balancer plugin for neutron
+## Enable Load Balancer plugin for neutron
 enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
 enable_plugin octavia https://github.com/openstack/octavia.git
 ENABLED_SERVICES+=,q-lbaasv2
 ENABLED_SERVICES+=,octavia,o-cw,o-hk,o-hm,o-api
 
+## Swift
+
+SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
+SWIFT_REPLICAS=1
+SWIFT_DATA_DIR=$DEST/data
+enable_service s-proxy s-object s-container s-account
 
 
-
-#2 Heat service
-enable_service heat h-eng h-api h-api-cfn h-api-cw
-
-# Enable Ceilometer (Metering)
+## Enable Ceilometer (Metering)
 enable_service ceilometer-acompute ceilometer-acentral ceilometer-anotification ceilometer-collector ceilometer-api
 enable_plugin ceilometer https://git.openstack.org/openstack/ceilometer
 enable_plugin aodh https://git.openstack.org/openstack/aodh
+## Enable Heat
+ENABLED_SERVICES+=,heat,h-api, h-api-cfn, h-api-cw, h-eng
 
 CEILOMETER_BACKEND=mongodb
 CEILOMETER_NOTIFICATION_TOPICS=notifications,profiler
@@ -341,35 +358,44 @@ run stack.sh:</p>
 <p>เปิด browser ไปยัง <a class="reference external" href="http://172.18.161.6/dashboard">http://172.18.161.6/dashboard</a></p>
 <img alt="_images/devstack01.png" src="_images/devstack01.png" />
 <p>local.conf devstack2.exaple.com:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vagrant</span> <span class="n">ssh</span> <span class="n">devstack2</span>
-<span class="c1">## change to root</span>
-<span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span>
-<span class="n">useradd</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">stack</span> <span class="n">stack</span>
-<span class="n">echo</span> <span class="s2">&quot;stack ALL=(ALL) NOPASSWD: ALL&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sudoers</span>
-<span class="n">exit</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>vagrant ssh devstack2
+## change to root
+sudo su -
+useradd -d /opt/stack stack
+echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; &gt;&gt; /etc/sudoers
+exit
 
-<span class="c1">## on normal vagrant user</span>
-<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">update</span> <span class="o">-</span><span class="n">y</span>
-<span class="n">sudo</span> <span class="n">dnf</span> <span class="n">install</span> <span class="n">git</span> <span class="o">-</span><span class="n">y</span>
-<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">openstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">openstack</span><span class="o">-</span><span class="n">dev</span><span class="o">/</span><span class="n">devstack</span>
-<span class="n">cd</span> <span class="n">devstack</span>
+## on normal vagrant user
+sudo dnf update -y
+sudo dnf install git -y
+git clone https://git.openstack.org/openstack-dev/devstack
+cd devstack
 
-<span class="n">vi</span> <span class="n">local</span><span class="o">.</span><span class="n">conf</span>
+vi local.conf
 
-<span class="p">[[</span><span class="n">local</span><span class="o">|</span><span class="n">localrc</span><span class="p">]]</span>
-<span class="n">HOST_IP</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.7</span>
-<span class="n">SERVICE_HOST</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span>
-<span class="n">MYSQL_HOST</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span>
-<span class="n">RABBIT_HOST</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span>
-<span class="n">GLANCE_HOSTPORT</span><span class="o">=</span><span class="mf">172.18</span><span class="o">.</span><span class="mf">161.6</span><span class="p">:</span><span class="mi">9292</span>
-<span class="n">ADMIN_PASSWORD</span><span class="o">=</span><span class="n">secret</span>
-<span class="n">MYSQL_PASSWORD</span><span class="o">=</span><span class="n">secret</span>
-<span class="n">RABBIT_PASSWORD</span><span class="o">=</span><span class="n">secret</span>
-<span class="n">SERVICE_PASSWORD</span><span class="o">=</span><span class="n">secret</span>
+[[local|localrc]]
+HOST_IP=172.18.161.7
+SERVICE_HOST=172.18.161.6
+MYSQL_HOST=$SERVICE_HOST
+RABBIT_HOST=$SERVICE_HOST
+GLANCE_HOSTPORT=172.18.161.6:9292
 
-<span class="c1">## Neutron options</span>
-<span class="n">PUBLIC_INTERFACE</span><span class="o">=</span><span class="n">eth1</span>
-<span class="n">ENABLED_SERVICES</span><span class="o">=</span><span class="n">n</span><span class="o">-</span><span class="n">cpu</span><span class="p">,</span><span class="n">rabbit</span><span class="p">,</span><span class="n">q</span><span class="o">-</span><span class="n">agt</span>
+ADMIN_PASSWORD=secret
+MYSQL_PASSWORD=secret
+RABBIT_PASSWORD=secret
+SERVICE_PASSWORD=secret
+
+## Neutron options
+PUBLIC_INTERFACE=eth1
+ENABLED_SERVICES=n-cpu,rabbit,q-agt
+
+NOVA_VNC_ENABLED=True
+NOVNCPROXY_URL=&quot;http://$SERVICE_HOST:6080/vnc_auto.html&quot;
+VNCSERVER_LISTEN=$HOST_IP
+VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTENNOVA_VNC_ENABLED=True
+NOVNCPROXY_URL=&quot;http://$SERVICE_HOST:6080/vnc_auto.html&quot;
+VNCSERVER_LISTEN=$HOST_IP
+VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTEN
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">=========================</span>
